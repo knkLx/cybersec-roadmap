@@ -7,12 +7,101 @@ const statusLabel = document.getElementById('statusLabel');
 const msgCountEl = document.getElementById('msgCount');
 const tokenCountEl = document.getElementById('tokenCount');
 const sessionTimeEl = document.getElementById('sessionTime');
+const voiceBtn = document.getElementById('voiceBtn');
+const voiceStatus = document.getElementById('voiceStatus');
 
 let messageCount = 0;
 let totalChars = 0;
-let currentMode = 'pentest';
 let isStreaming = false;
 let sessionStart = Date.now();
+
+// Voice Recognition
+let recognition = null;
+let isListening = false;
+let voiceEnabled = false;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'es-ES';
+
+    recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+        }
+        userInput.value = transcript;
+        userInput.style.height = 'auto';
+        userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+
+        if (event.results[event.results.length - 1].isFinal) {
+            stopListening();
+            setTimeout(() => sendMessage(), 300);
+        }
+    };
+
+    recognition.onerror = (event) => {
+        console.log('Speech error:', event.error);
+        stopListening();
+    };
+
+    recognition.onend = () => {
+        stopListening();
+    };
+}
+
+function toggleVoice() {
+    if (!recognition) {
+        addMessage('system', 'Tu navegador no soporta reconocimiento de voz. Usa Chrome.');
+        return;
+    }
+    if (isListening) {
+        stopListening();
+    } else {
+        startListening();
+    }
+}
+
+function startListening() {
+    if (!recognition) return;
+    isListening = true;
+    voiceEnabled = true;
+    voiceBtn.classList.add('listening');
+    voiceStatus.textContent = 'Listening...';
+    voiceStatus.style.color = '#ef4444';
+    recognition.start();
+}
+
+function stopListening() {
+    isListening = false;
+    voiceBtn.classList.remove('listening');
+    voiceStatus.textContent = voiceEnabled ? 'Voice ON' : 'Voice OFF';
+    voiceStatus.style.color = voiceEnabled ? '#22c55e' : '';
+    if (recognition && isListening) {
+        recognition.stop();
+    }
+}
+
+// Text-to-Speech for responses
+function speak(text) {
+    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.1;
+
+    const voices = window.speechSynthesis.getVoices();
+    const femaleVoice = voices.find(v => v.lang.startsWith('es') && v.name.toLowerCase().includes('female'))
+        || voices.find(v => v.lang.startsWith('es'))
+        || voices[0];
+    if (femaleVoice) utterance.voice = femaleVoice;
+
+    window.speechSynthesis.speak(utterance);
+}
 
 // Session timer
 setInterval(() => {
@@ -23,29 +112,24 @@ setInterval(() => {
     sessionTimeEl.textContent = `${h}:${m}:${s}`;
 }, 1000);
 
-// Fake system stats (real stats would need a backend endpoint)
+// Fake system stats
 setInterval(() => {
-    const cpu = 15 + Math.random() * 30;
-    const ram = 40 + Math.random() * 20;
-    const gpu = 5 + Math.random() * 15;
-    document.getElementById('cpuBar').style.width = cpu + '%';
-    document.getElementById('ramBar').style.width = ram + '%';
-    document.getElementById('gpuBar').style.width = gpu + '%';
+    document.getElementById('cpuBar').style.width = (15 + Math.random() * 30) + '%';
+    document.getElementById('ramBar').style.width = (40 + Math.random() * 20) + '%';
+    document.getElementById('gpuBar').style.width = (5 + Math.random() * 15) + '%';
 }, 2000);
 
-function setMode(mode) {
-    currentMode = mode;
+function setMode(mode, btn) {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (btn) btn.classList.add('active');
 
-    const modePrompts = {
-        pentest: 'Modo Pentest activado. Enfocare mis respuestas en seguridad ofensiva, vulnerabilidades y tecnicas de explotacion.',
-        philosophy: 'Modo Filosofia activado. Podemos debatir sobre existencialismo, etica, logica y el sentido de la vida.',
-        code: 'Modo Codigo activado. Te ayudo con programacion, algoritmos, arquitectura de software y debugging.',
-        general: 'Modo General activado. Puedo ayudarte con cualquier tema.'
+    const prompts = {
+        pentest: 'Modo Pentest. Enfocare en seguridad ofensiva y vulnerabilidades.',
+        philosophy: 'Modo Filosofia. Puedo debatir sobre existencialismo, etica y logica.',
+        code: 'Modo Codigo. Te ayudo con programacion y arquitectura.',
+        general: 'Modo General. Puedo ayudarte con cualquier tema.'
     };
-
-    addMessage('system', modePrompts[mode]);
+    addMessage('system', prompts[mode]);
 }
 
 function addMessage(role, content) {
@@ -54,15 +138,12 @@ function addMessage(role, content) {
 
     const div = document.createElement('div');
     div.className = `message ${role}`;
-
     const time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    const roleLabel = role === 'user' ? 'YOU' : role === 'assistant' ? 'NOVA' : 'SYSTEM';
-
+    const label = role === 'user' ? 'YOU' : role === 'assistant' ? 'NOVA' : 'SYSTEM';
     div.innerHTML = `
         <div class="message-bubble">${escapeHtml(content).replace(/\n/g, '<br>')}</div>
-        <div class="message-meta">${roleLabel} | ${time}</div>
+        <div class="message-meta">${label} | ${time}</div>
     `;
-
     chatMessages.appendChild(div);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     return div;
@@ -72,13 +153,7 @@ function addTypingIndicator() {
     const div = document.createElement('div');
     div.className = 'message assistant';
     div.id = 'typingIndicator';
-    div.innerHTML = `
-        <div class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-        </div>
-    `;
+    div.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
     chatMessages.appendChild(div);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     return div;
@@ -130,7 +205,6 @@ async function sendMessage() {
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-
         let fullResponse = '';
         let responseDiv = null;
 
@@ -145,7 +219,6 @@ async function sendMessage() {
                 if (!line.startsWith('data: ')) continue;
                 try {
                     const data = JSON.parse(line.slice(6));
-
                     if (data.content) {
                         if (!responseDiv) {
                             typingDiv.remove();
@@ -156,10 +229,13 @@ async function sendMessage() {
                         responseDiv.querySelector('.message-bubble').textContent = fullResponse;
                         chatMessages.scrollTop = chatMessages.scrollHeight;
                     }
-
                     if (data.done) {
                         totalChars += fullResponse.length;
                         updateStats();
+                        // Speak the response
+                        if (voiceEnabled && fullResponse.length < 500) {
+                            speak(fullResponse);
+                        }
                     }
                 } catch (e) {}
             }
@@ -189,17 +265,11 @@ function sendQuick(text) {
 function clearChat() {
     if (!confirm('Clear all conversation history?')) return;
     fetch('/api/clear', { method: 'POST' });
-    chatMessages.innerHTML = '';
-    messageCount = 0;
-    totalChars = 0;
-    updateStats();
-
-    // Re-add welcome
     chatMessages.innerHTML = `
         <div class="welcome-message">
             <div class="welcome-icon">&#x2726;</div>
             <h2>NOVA ONLINE</h2>
-            <p>Historial limpio. Estoy lista para una nueva conversacion.</p>
+            <p>Historial limpio. Estoy lista.</p>
             <div class="quick-actions">
                 <button onclick="sendQuick('Que es XSS y como funciona?')">XSS</button>
                 <button onclick="sendQuick('Explicame el estoicismo')">Filosofia</button>
@@ -208,14 +278,18 @@ function clearChat() {
             </div>
         </div>
     `;
+    messageCount = 0;
+    totalChars = 0;
+    updateStats();
 }
 
-function handleKeyDown(e) {
+// Key handler
+userInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
     }
-}
+});
 
 // Auto-resize textarea
 userInput.addEventListener('input', function() {
@@ -223,21 +297,25 @@ userInput.addEventListener('input', function() {
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
 
-// Focus on load
+// Load voices for TTS
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// Focus on load and load history
 window.addEventListener('load', () => {
     userInput.focus();
     setStatus('ONLINE', '#22c55e');
-});
 
-// Load history on start
-fetch('/api/history').then(r => r.json()).then(history => {
-    if (history.length > 0) {
-        document.querySelector('.welcome-message')?.remove();
-        history.forEach(msg => {
-            addMessage(msg.role, msg.content);
-            messageCount++;
-            totalChars += msg.content.length;
-        });
-        updateStats();
-    }
+    fetch('/api/history').then(r => r.json()).then(history => {
+        if (history.length > 0) {
+            document.querySelector('.welcome-message')?.remove();
+            history.forEach(msg => {
+                addMessage(msg.role, msg.content);
+                messageCount++;
+                totalChars += msg.content.length;
+            });
+            updateStats();
+        }
+    });
 });
