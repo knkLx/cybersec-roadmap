@@ -45,3 +45,7 @@ burp_*
 # Temp files
 *.tmp
 *.bak
+
+# GitHub token (NEVER commit this)
+*.token
+.env
