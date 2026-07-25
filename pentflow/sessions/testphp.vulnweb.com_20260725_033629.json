@@ -1,0 +1,11 @@
+{
+  "target": "http://testphp.vulnweb.com",
+  "session_id": "testphp.vulnweb.com_20260725_033629",
+  "created_at": "2026-07-25T03:36:29.560703",
+  "updated_at": "2026-07-25T03:36:29.560740",
+  "status": "active",
+  "phases": {},
+  "findings": [],
+  "notes": "",
+  "github_repo": ""
+}

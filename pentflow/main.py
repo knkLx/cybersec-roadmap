@@ -100,6 +100,54 @@ async def run_phase(target: str, phase: str, session_id: str = None):
     engine.display_summary()
 
 
+async def run_nuclei(target: str, tags: str = None, severity: str = "low,medium,high,critical", template: str = None):
+    from modules.scan.nuclei_scan import NucleiScanner
+
+    console.print(f"\n[bold cyan]Running Nuclei against: {target}[/bold cyan]\n")
+
+    nuclei = NucleiScanner(target)
+
+    if template:
+        findings = await nuclei.scan_by_template(template)
+    elif tags:
+        findings = await nuclei.scan_with_tags(tags)
+    else:
+        findings = await nuclei.scan(severity=severity)
+
+    # Display results
+    if findings:
+        from rich.table import Table
+        table = Table(title=f"Nuclei Findings ({len(findings)} found)", show_header=True, header_style="bold")
+        table.add_column("Severity", width=10)
+        table.add_column("Template", style="cyan")
+        table.add_column("Target")
+        table.add_column("Description", max_width=50)
+
+        severity_colors = {
+            "critical": "red", "high": "yellow", "medium": "orange3",
+            "low": "blue", "info": "dim"
+        }
+
+        for f in findings:
+            color = severity_colors.get(f.severity, "white")
+            table.add_row(
+                f"[{color}]{f.severity.upper()}[/{color}]",
+                f.id.replace("NUCLEI-", ""),
+                f.target[:50],
+                f.description[:50],
+            )
+        console.print(table)
+    else:
+        console.print("[dim]No findings from Nuclei[/dim]")
+
+    # Save to session
+    session = Session(target=target)
+    for f in findings:
+        session.add_finding(f)
+    session.save()
+    console.print(f"\n[dim]Session saved: {session.session_id}[/dim]")
+
+
 def interactive_mode():
     print_banner()
     console.print("[bold]Interactive Mode[/bold]\n")
@@ -162,6 +210,10 @@ def main():
     parser.add_argument("-i", "--interactive", action="store_true", help="Interactive mode")
     parser.add_argument("--list", action="store_true", help="List all sessions")
     parser.add_argument("--export", help="Export session to GitHub")
+    parser.add_argument("--nuclei", action="store_true", help="Run Nuclei scan only")
+    parser.add_argument("--nuclei-tags", help="Nuclei tags (e.g., cve,xss,sqli)")
+    parser.add_argument("--nuclei-severity", default="low,medium,high,critical", help="Nuclei severity filter")
+    parser.add_argument("--nuclei-template", help="Specific Nuclei template or directory")
     parser.add_argument("-v", "--version", action="version", version=f"PentFlow {VERSION}")
 
     args = parser.parse_args()
@@ -178,6 +230,9 @@ def main():
             engine.export_to_github()
         except FileNotFoundError:
             console.print("[red]Session not found[/red]")
+    elif args.target and args.nuclei:
+        print_banner()
+        asyncio.run(run_nuclei(args.target, args.nuclei_tags, args.nuclei_severity, args.nuclei_template))
     elif args.target:
         print_banner()
         if args.phase:

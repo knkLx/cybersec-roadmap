@@ -17,6 +17,7 @@ from modules.recon.dnsrecon import DNSRecon
 from modules.scan.headers import HeaderAnalyzer
 from modules.scan.info_disclosure import InfoDisclosureScanner
 from modules.scan.vuln_scanner import VulnScanner
+from modules.scan.nuclei_scan import NucleiScanner
 from modules.exploit.xss_tester import XSSTester
 from modules.exploit.sqli_detector import SQLiDetector
 from modules.report.generator import ReportGenerator
@@ -133,6 +134,14 @@ class PentestEngine:
             for f in vuln_findings:
                 self.session.add_finding(f)
             progress.update(task, description=f"[green]Vulnerabilities: {len(vuln_findings)}", completed=1, total=1)
+
+            # Nuclei scan
+            task = progress.add_task("[yellow]Running Nuclei templates...", total=None)
+            nuclei = NucleiScanner(self.target)
+            nuclei_findings = await nuclei.scan(rate_limit=150, concurrency=25)
+            for f in nuclei_findings:
+                self.session.add_finding(f)
+            progress.update(task, description=f"[green]Nuclei findings: {len(nuclei_findings)}", completed=1, total=1)
 
         self.session.phases["scan"] = "completed"
         self.session.save()

@@ -1,0 +1,618 @@
+{
+  "target": "https://example.com",
+  "session_id": "example.com_20260725_034235",
+  "created_at": "2026-07-25T03:42:35.336264",
+  "updated_at": "2026-07-25T03:42:35.336434",
+  "status": "active",
+  "phases": {},
+  "findings": [
+    {
+      "id": "NUCLEI-DNS-WAF-DETECT",
+      "title": "DNS WAF Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com",
+      "description": "A DNS WAF was detected.",
+      "evidence": "Template: dns-waf-detect\nMatched at: example.com\nMatcher: cloudflare",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.300955"
+    },
+    {
+      "id": "NUCLEI-AZURE-DOMAIN-TENANT",
+      "title": "Microsoft Azure Domain Tenant ID - Detect",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://login.microsoftonline.com:443/example.com/v2.0/.well-known/openid-configuration",
+      "description": "Microsoft Azure Domain Tenant ID was detected.",
+      "evidence": "Template: azure-domain-tenant\nMatched at: https://login.microsoftonline.com:443/example.com/v2.0/.well-known/openid-configuration\nExtracted: c7c08208-4f4d-45f1-83cd-5e2f491ab786\ncurl: curl -X 'GET' -d '' -H 'Host: login.microsoftonline.com' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15' 'https://",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://azure.microsoft.com"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301041"
+    },
+    {
+      "id": "NUCLEI-WAF-DETECT",
+      "title": "WAF Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "A web application firewall was detected.",
+      "evidence": "Template: waf-detect\nMatched at: https://example.com\nMatcher: cloudflare\ncurl: curl -X 'POST' -d '_=<script>alert(1)</script>' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Host: example.com' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://github.com/Ekultek/WhatWaf"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301088"
+    },
+    {
+      "id": "NUCLEI-DEPRECATED-TLS",
+      "title": "Deprecated TLS Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "Both TLS 1.1 and SSLv3 are deprecated in favor of stronger encryption.\n",
+      "evidence": "Template: deprecated-tls\nMatched at: example.com:443\nExtracted: tls11",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://ssl-config.mozilla.org/#config=intermediate"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301116"
+    },
+    {
+      "id": "NUCLEI-TLS-VERSION",
+      "title": "TLS Version - Detect",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "TLS version detection is a security process used to determine the version of the Transport Layer Security (TLS) protocol used by a computer or server.\nIt is important to detect the TLS version in order to ensure secure communication between two computers or servers.\n",
+      "evidence": "Template: tls-version\nMatched at: example.com:443\nExtracted: tls10",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301139"
+    },
+    {
+      "id": "NUCLEI-DEPRECATED-TLS",
+      "title": "Deprecated TLS Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "Both TLS 1.1 and SSLv3 are deprecated in favor of stronger encryption.\n",
+      "evidence": "Template: deprecated-tls\nMatched at: example.com:443\nExtracted: tls10",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://ssl-config.mozilla.org/#config=intermediate"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301159"
+    },
+    {
+      "id": "NUCLEI-TLS-VERSION",
+      "title": "TLS Version - Detect",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "TLS version detection is a security process used to determine the version of the Transport Layer Security (TLS) protocol used by a computer or server.\nIt is important to detect the TLS version in order to ensure secure communication between two computers or servers.\n",
+      "evidence": "Template: tls-version\nMatched at: example.com:443\nExtracted: tls11",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301177"
+    },
+    {
+      "id": "NUCLEI-TLS-VERSION",
+      "title": "TLS Version - Detect",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "TLS version detection is a security process used to determine the version of the Transport Layer Security (TLS) protocol used by a computer or server.\nIt is important to detect the TLS version in order to ensure secure communication between two computers or servers.\n",
+      "evidence": "Template: tls-version\nMatched at: example.com:443\nExtracted: tls12",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301194"
+    },
+    {
+      "id": "NUCLEI-TLS-VERSION",
+      "title": "TLS Version - Detect",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "TLS version detection is a security process used to determine the version of the Transport Layer Security (TLS) protocol used by a computer or server.\nIt is important to detect the TLS version in order to ensure secure communication between two computers or servers.\n",
+      "evidence": "Template: tls-version\nMatched at: example.com:443\nExtracted: tls13",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301210"
+    },
+    {
+      "id": "NUCLEI-TECH-DETECT",
+      "title": "Wappalyzer Technology Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "Nuclei template 'tech-detect' matched",
+      "evidence": "Template: tech-detect\nMatched at: https://example.com\nMatcher: cloudflare\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15' 'https",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301238"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: x-permitted-cross-domain-policies\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301274"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: cross-origin-embedder-policy\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301303"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: cross-origin-opener-policy\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301329"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: cross-origin-resource-policy\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301355"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: content-security-policy\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301385"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: x-frame-options\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301409"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: referrer-policy\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301433"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: strict-transport-security\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301457"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: permissions-policy\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301482"
+    },
+    {
+      "id": "NUCLEI-HTTP-MISSING-SECURITY-HEADERS",
+      "title": "HTTP Missing Security Headers",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://example.com",
+      "description": "This template searches for missing HTTP security headers. The impact of these missing headers can vary.\n",
+      "evidence": "Template: http-missing-security-headers\nMatched at: https://example.com\nMatcher: x-content-type-options\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15' 'ht",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301505"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: client delete prohibited, client transfer prohibited, client update prohibited\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301550"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: 2026-01-16T18:26:50Z\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301592"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: 376\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301632"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: \ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301671"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: 1995-08-14T04:00:00Z\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301709"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: 2026-08-13T04:00:00Z\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301746"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: RESERVED-Internet Assigned Numbers Authority\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301785"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: \ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301826"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: ELLIOTT.NS.CLOUDFLARE.COM, HERA.NS.CLOUDFLARE.COM\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301864"
+    },
+    {
+      "id": "NUCLEI-RDAP-WHOIS",
+      "title": "RDAP WHOIS",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "https://rdap.verisign.com/com/v1/domain/example.com",
+      "description": "RDAP (Registration Data Access Protocol) is a standard defined by the IETF to replace the whois protocol\nin queries for information about Internet resource records such as domain names, IP addresses, and ASNs.\n",
+      "evidence": "Template: rdap-whois\nMatched at: https://rdap.verisign.com/com/v1/domain/example.com\nExtracted: true\ncurl: curl -X 'GET' -d '' -H 'Accept: */*' -H 'Accept-Language: en' -H 'Referer: https://www.rdap.net/domain/example.com' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Fi",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://about.rdap.org/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301900"
+    },
+    {
+      "id": "NUCLEI-DNSSEC-DETECTION",
+      "title": "DNSSEC Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com",
+      "description": "Domain Name System Security Extensions (DNSSEC) are enabled. The Delegation of Signing (DS) record provides information about a signed zone file when DNSSEC enabled.",
+      "evidence": "Template: dnssec-detection\nMatched at: example.com",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://www.icann.org/resources/pages/dnssec-what-is-it-why-important-2019-03-05-en",
+        "https://www.cyberciti.biz/faq/unix-linux-test-and-validate-dnssec-using-dig-command-line/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301923"
+    },
+    {
+      "id": "NUCLEI-AAAA-FINGERPRINT",
+      "title": "AAAA Record - IPv6 Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com",
+      "description": "An AAAA record was detected. AAAA records are used to map domain names to IPv6 addresses.\n",
+      "evidence": "Template: aaaa-fingerprint\nMatched at: example.com\nExtracted: 2606:4700:10::ac42:93f3, 2606:4700:10::6814:179a",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://www.cloudflare.com/learning/dns/dns-records/dns-aaaa-record/",
+        "https://en.wikipedia.org/wiki/IPv6_address"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301949"
+    },
+    {
+      "id": "NUCLEI-MX-FINGERPRINT",
+      "title": "MX Record Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com",
+      "description": "An MX record was detected. MX records direct emails to a mail exchange server.",
+      "evidence": "Template: mx-fingerprint\nMatched at: example.com\nExtracted: 0 .",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://www.cloudflare.com/learning/dns/dns-records/dns-mx-record/",
+        "https://mxtoolbox.com/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.301970"
+    },
+    {
+      "id": "NUCLEI-NAMESERVER-FINGERPRINT",
+      "title": "NS Record Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com",
+      "description": "An NS record was detected. An NS record delegates a subdomain to a set of name servers.",
+      "evidence": "Template: nameserver-fingerprint\nMatched at: example.com\nExtracted: elliott.ns.cloudflare.com., hera.ns.cloudflare.com.",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.301990"
+    },
+    {
+      "id": "NUCLEI-SPF-RECORD-DETECT",
+      "title": "SPF Record - Detection",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com",
+      "description": "An SPF TXT record was detected\n",
+      "evidence": "Template: spf-record-detect\nMatched at: example.com\nExtracted: v=spf1 -all\"",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://www.mimecast.com/content/how-to-create-an-spf-txt-record"
+      ],
+      "timestamp": "2026-07-25T03:42:35.302025"
+    },
+    {
+      "id": "NUCLEI-TXT-FINGERPRINT",
+      "title": "DNS TXT Record Detected",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com",
+      "description": "A DNS TXT record was detected. The TXT record lets a domain admin leave notes on a DNS server.",
+      "evidence": "Template: txt-fingerprint\nMatched at: example.com\nExtracted: \"v=spf1 -all\", \"_k2n1y4vw3qtb4skdx9e7dxt97qrmmq9\"",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://www.netspi.com/blog/technical/network-penetration-testing/analyzing-dns-txt-records-to-fingerprint-service-providers/"
+      ],
+      "timestamp": "2026-07-25T03:42:35.302047"
+    },
+    {
+      "id": "NUCLEI-DMARC-DETECT",
+      "title": "DNS DMARC - Detect",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "_dmarc.example.com",
+      "description": "DNS DMARC information was detected.\n",
+      "evidence": "Template: dmarc-detect\nMatched at: _dmarc.example.com\nExtracted: \"v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s\"",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://dmarc.org/",
+        "https://dmarc.org/wiki/FAQ#Why_is_DMARC_important.3F"
+      ],
+      "timestamp": "2026-07-25T03:42:35.302068"
+    },
+    {
+      "id": "NUCLEI-SSL-ISSUER",
+      "title": "Detect SSL Certificate Issuer",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "Extract the issuer's organization from the target's certificate. Issuers are entities which sign and distribute certificates.\n",
+      "evidence": "Template: ssl-issuer\nMatched at: example.com:443\nExtracted: SSL Corporation",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.302084"
+    },
+    {
+      "id": "NUCLEI-SSL-DNS-NAMES",
+      "title": "SSL DNS Names",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "Extract the Subject Alternative Name (SAN) from the target's certificate. SAN facilitates the usage of additional hostnames with the same certificate.\n",
+      "evidence": "Template: ssl-dns-names\nMatched at: example.com:443\nExtracted: example.com, *.example.com",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [],
+      "timestamp": "2026-07-25T03:42:35.302105"
+    },
+    {
+      "id": "NUCLEI-WILDCARD-TLS",
+      "title": "Wildcard TLS Certificate",
+      "severity": "info",
+      "category": "Nuclei",
+      "target": "example.com:443",
+      "description": "Checks a sites certificate to see if there are wildcard CN or SAN entries.\n",
+      "evidence": "Template: wildcard-tls\nMatched at: example.com:443\nExtracted: CN: example.com,  SAN: [example.com *.example.com]",
+      "remediation": "",
+      "cvss": 0,
+      "cwe": "",
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html#carefully-consider-the-use-of-wildcard-certificates"
+      ],
+      "timestamp": "2026-07-25T03:42:35.302121"
+    }
+  ],
+  "notes": "",
+  "github_repo": ""
+}
