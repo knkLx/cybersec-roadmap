@@ -27,7 +27,8 @@ class GitHubExporter:
 
     def export(self, repo_name: str = None) -> str:
         if not repo_name:
-            repo_name = f"pentest-{self.session.target}-{datetime.now().strftime('%Y%m%d')}"
+            clean_target = self.session.target.replace("https://", "").replace("http://", "").replace("/", "_").rstrip("_")
+            repo_name = f"pentest-{clean_target}-{datetime.now().strftime('%Y%m%d')}"
 
         export_dir = REPORTS_DIR / repo_name
         export_dir.mkdir(exist_ok=True)

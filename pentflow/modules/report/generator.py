@@ -18,7 +18,8 @@ class ReportGenerator:
         s = self.session
         summary = s.summary()
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"report_{s.target}_{ts}.md"
+        clean_target = s.target.replace("https://", "").replace("http://", "").replace("/", "_").rstrip("_")
+        filename = f"report_{clean_target}_{ts}.md"
         path = REPORTS_DIR / filename
 
         severity_emoji = {
@@ -122,7 +123,8 @@ The findings should be verified manually before reporting to bug bounty programs
         s = self.session
         summary = s.summary()
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"report_{s.target}_{ts}.html"
+        clean_target = s.target.replace("https://", "").replace("http://", "").replace("/", "_").rstrip("_")
+        filename = f"report_{clean_target}_{ts}.html"
         path = REPORTS_DIR / filename
 
         findings_html = ""
