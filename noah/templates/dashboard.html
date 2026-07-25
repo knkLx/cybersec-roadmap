@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSec Dashboard — War Room</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root{--c:#00e5ff;--g:rgba(0,229,255,.4);--d:#00e5ff66;--bg:#020810;--t:#d0e8ff;--td:#4a6a8a;--red:#ff3344;--green:#00ff88;--yellow:#ffaa00;--purple:#8855ff}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Share Tech Mono',monospace;background:var(--bg);color:var(--t);min-height:100vh;padding:15px}
+        .bg{position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(rgba(0,229,255,.01)1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.01)1px,transparent 1px);background-size:25px 25px}
+
+        /* Header */
+        .hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,229,255,.1);margin-bottom:15px}
+        .hdr h1{font-family:'Orbitron',monospace;font-size:16px;color:var(--c);letter-spacing:5px;text-shadow:0 0 15px var(--g)}
+        .hdr .status{font-size:10px;color:var(--green);display:flex;align-items:center;gap:5px}
+        .hdr .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .hdr .time{font-size:11px;color:var(--c);letter-spacing:2px}
+
+        /* Grid */
+        .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
+        @media(max-width:1200px){.grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){.grid{grid-template-columns:1fr}}
+
+        /* Cards */
+        .card{background:rgba(0,229,255,.02);border:1px solid rgba(0,229,255,.08);border-radius:5px;padding:12px;position:relative;overflow:hidden}
+        .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.3}
+        .card-title{font-family:'Orbitron',monospace;font-size:9px;color:var(--c);letter-spacing:3px;margin-bottom:8px;text-transform:uppercase}
+        .card-value{font-family:'Orbitron',monospace;font-size:24px;font-weight:900;color:var(--c);text-shadow:0 0 10px var(--g)}
+        .card-value.red{color:var(--red);text-shadow:0 0 10px rgba(255,51,68,.4)}
+        .card-value.green{color:var(--green);text-shadow:0 0 10px rgba(0,255,136,.4)}
+        .card-value.yellow{color:var(--yellow);text-shadow:0 0 10px rgba(255,170,0,.4)}
+        .card-sub{font-size:9px;color:var(--td);margin-top:4px;letter-spacing:1px}
+
+        /* Charts area */
+        .charts{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:15px}
+        @media(max-width:900px){.charts{grid-template-columns:1fr}}
+
+        .chart-card{background:rgba(0,229,255,.02);border:1px solid rgba(0,229,255,.08);border-radius:5px;padding:12px}
+        .chart-title{font-family:'Orbitron',monospace;font-size:9px;color:var(--c);letter-spacing:3px;margin-bottom:8px;text-transform:uppercase}
+
+        /* Findings table */
+        .findings{background:rgba(0,229,255,.02);border:1px solid rgba(0,229,255,.08);border-radius:5px;padding:12px;margin-bottom:15px}
+        .findings table{width:100%;border-collapse:collapse;font-size:11px}
+        .findings th{text-align:left;padding:6px 8px;border-bottom:1px solid rgba(0,229,255,.1);color:var(--c);font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase}
+        .findings td{padding:5px 8px;border-bottom:1px solid rgba(0,229,255,.04)}
+        .sev{display:inline-block;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:1px}
+        .sev.critical{background:rgba(255,51,68,.15);color:var(--red);border:1px solid rgba(255,51,68,.3)}
+        .sev.high{background:rgba(255,170,0,.15);color:var(--yellow);border:1px solid rgba(255,170,0,.3)}
+        .sev.medium{background:rgba(255,136,0,.1);color:#ff8800;border:1px solid rgba(255,136,0,.2)}
+        .sev.low{background:rgba(0,229,255,.1);color:var(--c);border:1px solid rgba(0,229,255,.2)}
+        .sev.info{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2)}
+
+        /* Scan controls */
+        .controls{display:flex;gap:8px;align-items:center;margin-bottom:15px;flex-wrap:wrap}
+        .controls input{background:rgba(0,229,255,.03);border:1px solid rgba(0,229,255,.1);color:var(--t);padding:8px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;border-radius:4px;outline:none;min-width:200px}
+        .controls input:focus{border-color:var(--c);box-shadow:0 0 8px rgba(0,229,255,.1)}
+        .controls input::placeholder{color:var(--td)}
+        .btn{background:rgba(0,229,255,.08);border:1px solid var(--c);color:var(--c);padding:8px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;border-radius:4px;transition:all .3s;letter-spacing:1px}
+        .btn:hover{background:rgba(0,229,255,.15);box-shadow:0 0 12px var(--g)}
+        .btn.danger{border-color:var(--red);color:var(--red)}
+        .btn.danger:hover{background:rgba(255,51,68,.1)}
+
+        /* Progress bar */
+        .progress{width:100%;height:4px;background:rgba(0,229,255,.08);border-radius:2px;margin:10px 0;overflow:hidden;display:none}
+        .progress.active{display:block}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--c),var(--green));border-radius:2px;transition:width .5s;box-shadow:0 0 6px var(--g)}
+
+        /* Terminal */
+        .terminal{background:rgba(0,0,0,.3);border:1px solid rgba(0,229,255,.08);border-radius:5px;padding:10px;max-height:300px;overflow-y:auto;font-size:10px;line-height:1.6}
+        .terminal::-webkit-scrollbar{width:3px}
+        .terminal::-webkit-scrollbar-thumb{background:var(--d);border-radius:2px}
+        .term-line{margin-bottom:2px}
+        .term-line .ts{color:var(--td)}
+        .term-line .ok{color:var(--green)}
+        .term-line .err{color:var(--red)}
+        .term-line .info{color:var(--c)}
+
+        /* Port map */
+        .port-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:4px}
+        .port{padding:4px;text-align:center;border-radius:3px;font-size:9px;cursor:pointer;transition:all .3s}
+        .port.open{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2);color:var(--green)}
+        .port.closed{background:rgba(255,51,68,.05);border:1px solid rgba(255,51,68,.1);color:var(--red);opacity:.4}
+        .port.filtered{background:rgba(255,170,0,.1);border:1px solid rgba(255,170,0,.2);color:var(--yellow)}
+
+        /* Vulnerability bar chart */
+        .vuln-bars{display:flex;align-items:end;gap:8px;height:120px;padding:10px 0}
+        .vuln-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+        .vuln-bar .bar{width:100%;border-radius:3px 3px 0 0;transition:height .5s;min-height:4px}
+        .vuln-bar .count{font-size:10px;font-weight:700}
+        .vuln-bar .label{font-size:8px;color:var(--td);text-transform:uppercase;letter-spacing:1px}
+
+        /* System monitor */
+        .sys-bars{display:flex;flex-direction:column;gap:8px}
+        .sys-bar{display:flex;align-items:center;gap:10px}
+        .sys-bar .label{width:50px;font-size:9px;color:var(--td);text-transform:uppercase}
+        .sys-bar .bar{flex:1;height:6px;background:rgba(0,229,255,.08);border-radius:3px;overflow:hidden}
+        .sys-bar .fill{height:100%;border-radius:3px;transition:width .5s}
+        .sys-bar .val{width:40px;font-size:10px;text-align:right;font-weight:700}
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+
+    <div class="hdr">
+        <h1>CYBERSEC WAR ROOM</h1>
+        <div class="status"><span class="dot"></span> SYSTEMS ONLINE</div>
+        <div class="time" id="clock">--:--:--</div>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="target" placeholder="Target: example.com or 192.168.1.0/24">
+        <button class="btn" onclick="startScan()">▶ SCAN</button>
+        <button class="btn" onclick="quickRecon()">⚡ QUICK RECON</button>
+        <button class="btn danger" onclick="nucleiScan()">🔴 NUCLEI</button>
+        <span id="scanStatus" style="font-size:10px;color:var(--td)">Ready</span>
+    </div>
+
+    <div class="progress" id="progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">Total Findings</div>
+            <div class="card-value" id="totalFindings">0</div>
+            <div class="card-sub">Across all scans</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Critical / High</div>
+            <div class="card-value red" id="critHigh">0</div>
+            <div class="card-sub">Requires immediate attention</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Ports Open</div>
+            <div class="card-value green" id="portsOpen">0</div>
+            <div class="card-sub">Discovered services</div>
+        </div>
+        <div class="card">
+            <div class="card-title">WAF Status</div>
+            <div class="card-value" id="wafStatus" style="font-size:14px">--</div>
+            <div class="card-sub">Web Application Firewall</div>
+        </div>
+    </div>
+
+    <div class="charts">
+        <div class="chart-card">
+            <div class="chart-title">Vulnerability Distribution</div>
+            <div class="vuln-bars" id="vulnBars">
+                <div class="vuln-bar"><div class="bar" style="height:0;background:var(--red)"></div><div class="count" id="vCrit">0</div><div class="label">Critical</div></div>
+                <div class="vuln-bar"><div class="bar" style="height:0;background:var(--yellow)"></div><div class="count" id="vHigh">0</div><div class="label">High</div></div>
+                <div class="vuln-bar"><div class="bar" style="height:0;background:#ff8800"></div><div class="count" id="vMed">0</div><div class="label">Medium</div></div>
+                <div class="vuln-bar"><div class="bar" style="height:0;background:var(--c)"></div><div class="count" id="vLow">0</div><div class="label">Low</div></div>
+                <div class="vuln-bar"><div class="bar" style="height:0;background:var(--green)"></div><div class="count" id="vInfo">0</div><div class="label">Info</div></div>
+            </div>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">System Resources</div>
+            <div class="sys-bars">
+                <div class="sys-bar"><span class="label">CPU</span><div class="bar"><div class="fill" id="sysCpu" style="width:0;background:var(--c)"></div></div><span class="val" id="sysCpuVal">0%</span></div>
+                <div class="sys-bar"><span class="label">RAM</span><div class="bar"><div class="fill" id="sysRam" style="width:0;background:var(--green)"></div></div><span class="val" id="sysRamVal">0%</span></div>
+                <div class="sys-bar"><span class="label">DISK</span><div class="bar"><div class="fill" id="sysDisk" style="width:0;background:var(--yellow)"></div></div><span class="val" id="sysDiskVal">0%</span></div>
+                <div class="sys-bar"><span class="label">TEMP</span><div class="bar"><div class="fill" id="sysTemp" style="width:0;background:var(--red)"></div></div><span class="val" id="sysTempVal">--</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="findings">
+        <div class="chart-title">Scan Results</div>
+        <table>
+            <thead><tr><th>Severity</th><th>Finding</th><th>Target</th><th>CWE</th><th>Action</th></tr></thead>
+            <tbody id="findingsBody"><tr><td colspan="5" style="text-align:center;color:var(--td)">No scan results yet. Enter a target and click SCAN.</td></tr></tbody>
+        </table>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Live Terminal</div>
+        <div class="terminal" id="terminal">
+            <div class="term-line"><span class="ts">[SYS]</span> <span class="info">CyberSec War Room initialized</span></div>
+            <div class="term-line"><span class="ts">[SYS]</span> PentFlow v2.0.0 loaded</span></div>
+            <div class="term-line"><span class="ts">[SYS]</span> Ready for scanning. Enter target above.</div>
+        </div>
+    </div>
+
+    <script>
+        // Clock
+        setInterval(()=>{$('clock').textContent=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})},1000);
+        function $(id){return document.getElementById(id)}
+
+        // System monitor
+        function updateSys(){fetch('/api/system').then(r=>r.json()).then(d=>{
+            $('sysCpu').style.width=d.cpu+'%';$('sysCpu').style.background=d.cpu>80?'var(--red)':d.cpu>60?'var(--yellow)':'var(--c)';$('sysCpuVal').textContent=d.cpu+'%';
+            $('sysRam').style.width=d.ram_used+'%';$('sysRam').style.background=d.ram_used>85?'var(--red)':d.ram_used>70?'var(--yellow)':'var(--green)';$('sysRamVal').textContent=d.ram_used+'%';
+            $('sysDisk').style.width=d.disk_used+'%';$('sysDiskVal').textContent=d.disk_used+'%';
+            if(d.cpu_temp>0){$('sysTemp').style.width=Math.min(d.cpu_temp,100)+'%';$('sysTemp').style.background=d.cpu_temp>80?'var(--red)':d.cpu_temp>60?'var(--yellow)':'var(--c)';$('sysTempVal').textContent=d.cpu_temp+'°C'}
+        }).catch(()=>{})}
+        updateSys();setInterval(updateSys,5000);
+
+        // Terminal
+        function term(cls,msg){const t=$('terminal');t.innerHTML+=`<div class="term-line"><span class="ts">[${new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}]</span> <span class="${cls}">${msg}</span></div>`;t.scrollTop=t.scrollHeight}
+
+        // Scan functions
+        async function startScan(){
+            const target=$('target').value.trim();
+            if(!target){term('err','No target specified');return}
+            $('progress').classList.add('active');$('progressFill').style.width='0%';$('scanStatus').textContent='Scanning...';$('scanStatus').style.color='var(--yellow)';
+            term('info',`Starting scan against: ${target}`);
+
+            try{
+                // Run PentFlow via API
+                const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,full:true})});
+                const data=await res.json();
+                if(data.findings){
+                    updateFindings(data.findings);
+                    term('ok',`Scan complete: ${data.findings.length} findings`);
+                }
+                if(data.error)term('err',data.error);
+            }catch(e){term('err',`Scan error: ${e.message}`)}
+            $('progress').classList.remove('active');$('scanStatus').textContent='Complete';$('scanStatus').style.color='var(--green)';
+        }
+
+        async function quickRecon(){
+            const target=$('target').value.trim();
+            if(!target){term('err','No target specified');return}
+            $('progress').classList.add('active');$('progressFill').style.width='30%';$('scanStatus').textContent='Recon...';$('scanStatus').style.color='var(--yellow)';
+            term('info',`Quick recon: ${target}`);
+            try{
+                const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,phase:'recon'})});
+                const data=await res.json();
+                if(data.findings){updateFindings(data.findings);term('ok',`Recon complete: ${data.findings.length} findings`)}
+            }catch(e){term('err',`Recon error: ${e.message}`)}
+            $('progress').classList.remove('active');$('scanStatus').textContent='Complete';$('scanStatus').style.color='var(--green)';
+        }
+
+        async function nucleiScan(){
+            const target=$('target').value.trim();
+            if(!target){term('err','No target specified');return}
+            $('progress').classList.add('active');$('progressFill').style.width='50%';$('scanStatus').textContent='Nuclei...';$('scanStatus').style.color='var(--yellow)';
+            term('info',`Nuclei scan: ${target}`);
+            try{
+                const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,nuclei:true})});
+                const data=await res.json();
+                if(data.findings){updateFindings(data.findings);term('ok',`Nuclei complete: ${data.findings.length} findings`)}
+            }catch(e){term('err',`Nuclei error: ${e.message}`)}
+            $('progress').classList.remove('active');$('scanStatus').textContent='Complete';$('scanStatus').style.color='var(--green)';
+        }
+
+        function updateFindings(findings){
+            const counts={critical:0,high:0,medium:0,low:0,info:0};
+            findings.forEach(f=>{counts[f.severity]=(counts[f.severity]||0)+1});
+            const total=findings.length;
+            $('totalFindings').textContent=total;
+            $('critHigh').textContent=counts.critical+counts.high;
+            const maxBar=120;
+            const maxCount=Math.max(...Object.values(counts),1);
+            $('vCrit').textContent=counts.critical;$('vHigh').textContent=counts.high;$('vMed').textContent=counts.medium;$('vLow').textContent=counts.low;$('vInfo').textContent=counts.info;
+            const bars=document.querySelectorAll('.vuln-bar .bar');
+            [counts.critical,counts.high,counts.medium,counts.low,counts.info].forEach((c,i)=>{
+                bars[i].style.height=(c/maxCount*maxBar)+'px';
+            });
+
+            const tbody=$('findingsBody');tbody.innerHTML='';
+            findings.forEach(f=>{
+                const tr=document.createElement('tr');
+                tr.innerHTML=`<td><span class="sev ${f.severity}">${f.severity.toUpperCase()}</span></td><td>${f.title||f.id}</td><td style="color:var(--td)">${(f.target||'').substring(0,40)}</td><td style="color:var(--td)">${f.cwe||'-'}</td><td><button class="btn" style="padding:2px 6px;font-size:8px" onclick="window.open('https://cwe.mitre.org/data/definitions/${(f.cwe||'').replace('CWE-','')}.html','_blank')">CWE</button></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>

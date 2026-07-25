@@ -29,7 +29,7 @@ class NucleiScanner:
         severity: str = "low,medium,high,critical",
         rate_limit: int = 150,
         concurrency: int = 25,
-        timeout: int = 600,
+        timeout: int = 120,  # Reduced from 600 to 120s
         tags: list = None,
         exclude_tags: list = None,
     ) -> list:

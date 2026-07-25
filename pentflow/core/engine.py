@@ -18,8 +18,12 @@ from modules.scan.headers import HeaderAnalyzer
 from modules.scan.info_disclosure import InfoDisclosureScanner
 from modules.scan.vuln_scanner import VulnScanner
 from modules.scan.nuclei_scan import NucleiScanner
+from modules.scan.waf_detect import WAFDetector
+from modules.scan.dir_brute import DirectoryBruteforcer
+from modules.scan.scope_check import ScopeChecker
 from modules.exploit.xss_tester import XSSTester
 from modules.exploit.sqli_detector import SQLiDetector
+from modules.exploit.idor_tester import IDORDetector
 from modules.report.generator import ReportGenerator
 from modules.report.github_export import GitHubExporter
 from config import VERSION
@@ -38,6 +42,14 @@ class PentestEngine:
         console.print("\n[bold cyan]═══ PHASE 1: RECONNAISSANCE ═══[/bold cyan]\n")
 
         with Progress(SpinnerColumn(), TextColumn("{task.description}"), BarColumn(), console=console) as progress:
+
+            # Scope check (bug bounty)
+            task = progress.add_task("[cyan]Checking bug bounty scope...", total=None)
+            scope = ScopeChecker(self.target)
+            scope_findings = await scope.check()
+            for f in scope_findings:
+                self.session.add_finding(f)
+            progress.update(task, description=f"[green]Scope: {scope_findings[0].title[:40]}", completed=1, total=1)
 
             # Subdomains
             task = progress.add_task("[cyan]Enumerating subdomains...", total=None)
@@ -66,6 +78,15 @@ class PentestEngine:
             techs = await tech.detect()
             self.results["technologies"] = techs
             progress.update(task, description=f"[green]Technologies: {len(techs)}", completed=1, total=1)
+
+            # WAF Detection
+            task = progress.add_task("[cyan]Detecting WAF/IDS...", total=None)
+            waf = WAFDetector(self.target)
+            waf_findings = await waf.detect()
+            for f in waf_findings:
+                self.session.add_finding(f)
+            self.results["waf"] = waf_findings
+            progress.update(task, description=f"[green]WAF: {waf_findings[0].title[:40] if waf_findings else 'None'}", completed=1, total=1)
 
             # Endpoints
             task = progress.add_task("[cyan]Discovering endpoints...", total=None)
@@ -124,6 +145,14 @@ class PentestEngine:
                 self.session.add_finding(f)
             progress.update(task, description=f"[green]Info disclosure: {len(info_findings)}", completed=1, total=1)
 
+            # Directory bruteforce
+            task = progress.add_task("[yellow]Bruteforcing directories...", total=None)
+            dirbrute = DirectoryBruteforcer(self.target)
+            dir_findings = await dirbrute.scan(technologies=self.results.get("technologies", []))
+            for f in dir_findings:
+                self.session.add_finding(f)
+            progress.update(task, description=f"[green]Directories found: {len(dir_findings)}", completed=1, total=1)
+
             # Vulnerability scanner
             task = progress.add_task("[yellow]Running vulnerability scans...", total=None)
             vuln = VulnScanner(self.target)
@@ -135,13 +164,21 @@ class PentestEngine:
                 self.session.add_finding(f)
             progress.update(task, description=f"[green]Vulnerabilities: {len(vuln_findings)}", completed=1, total=1)
 
-            # Nuclei scan
+            # Nuclei scan (with timeout protection)
             task = progress.add_task("[yellow]Running Nuclei templates...", total=None)
-            nuclei = NucleiScanner(self.target)
-            nuclei_findings = await nuclei.scan(rate_limit=150, concurrency=25)
-            for f in nuclei_findings:
-                self.session.add_finding(f)
-            progress.update(task, description=f"[green]Nuclei findings: {len(nuclei_findings)}", completed=1, total=1)
+            try:
+                nuclei = NucleiScanner(self.target)
+                nuclei_findings = await asyncio.wait_for(
+                    nuclei.scan(rate_limit=150, concurrency=25),
+                    timeout=150  # 2.5 min max
+                )
+                for f in nuclei_findings:
+                    self.session.add_finding(f)
+                progress.update(task, description=f"[green]Nuclei findings: {len(nuclei_findings)}", completed=1, total=1)
+            except asyncio.TimeoutError:
+                progress.update(task, description="[yellow]Nuclei timed out (skipped)", completed=1, total=1)
+            except Exception as e:
+                progress.update(task, description=f"[red]Nuclei error: {str(e)[:30]}", completed=1, total=1)
 
         self.session.phases["scan"] = "completed"
         self.session.save()
@@ -175,6 +212,14 @@ class PentestEngine:
             for f in sqli_findings:
                 self.session.add_finding(f)
             progress.update(task, description=f"[green]SQLi findings: {len(sqli_findings)}", completed=1, total=1)
+
+            # IDOR
+            task = progress.add_task("[red]Testing IDOR vulnerabilities...", total=None)
+            idor = IDORDetector(self.target)
+            idor_findings = await idor.detect(endpoints=self.results.get("endpoints", []))
+            for f in idor_findings:
+                self.session.add_finding(f)
+            progress.update(task, description=f"[green]IDOR findings: {len(idor_findings)}", completed=1, total=1)
 
         self.session.phases["exploit"] = "completed"
         self.session.save()

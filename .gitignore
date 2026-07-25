@@ -1,11 +1,47 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
-.env
-.venv/
-venv/
 *.egg-info/
 dist/
 build/
-recon-tool/reports/
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+
+# OS
 .DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (user-specific, not for repo)
+noah/data/
+pentflow/reports/
+pentflow/sessions/
+
+# Logs
+*.log
+/tmp/
+
+# Models (large files)
+*.onnx
+*.bin
+*.gguf
+
+# Audio (generated)
+*.wav
+
+# Burp Suite
+burp_*
+
+# Temp files
+*.tmp
+*.bak

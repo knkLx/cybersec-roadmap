@@ -1,109 +1,138 @@
-# Cybersec Roadmap
+# CyberSec Roadmap — knkLx
 
-Estudiante de ciberseguridad en camino hacia **Red Team** y **DFIR** (Digital Forensics and Incident Response). Cursando un máster mientras construyo conocimiento de forma autodidacta y desarrollo herramientas para Bug Bounty.
+> Herramientas de ciberseguridad, IA local, y automatización de bug bounty.
+> Todo local, sin APIs de pago, 100% open source.
+
+## 🚀 NOAH — AI Companion
+
+**Tu asistente IA personal con control total del escritorio.**
+
+```bash
+# Arrancar
+bash noah/start.sh
+
+# Acceder
+http://localhost:7861          # Chat
+http://localhost:7861/dashboard # CyberSec Dashboard
+```
+
+**Características:**
+- Chat con qwen2.5:1.5b (local, 3s respuesta)
+- Voz Piper TTS (Daniela — voz femenina)
+- Wake word "Hey NOAH"
+- Control del escritorio: abrir apps, ejecutar código, bash
+- Búsqueda web: NVD CVE, GitHub, Wikipedia
+- Notas y memoria persistente
+- Dashboard cybersecurity en tiempo real
+- VTuber avatar con emociones
+
+**Comandos:**
+| Comando | Acción |
+|---------|--------|
+| `/open firefox` | Abrir aplicación |
+| `/bash ls -la` | Ejecutar bash |
+| `/run print(42)` | Ejecutar Python |
+| `/search CVE python` | Buscar en web |
+| `/system` | Info del sistema |
+| `/remember fact` | Guardar memoria |
+| `/note title\|content` | Crear nota |
 
 ---
 
-## Objetivos
+## 🔍 PentFlow — Bug Bounty Framework v2.0
 
-```
-[ACTUAL] Ciberseguridad General + Máster
-    │
-    ├─── Red Team (Offensive Security)
-    │     • Pentesting, OSINT, Post-Exploitation
-    │     • Certificaciones: OSCP, CRTO, PNPT
-    │     • Bug Bounty (HackerOne, Bugcrowd, Intigriti)
-    │
-    └─── DFIR (Blue Team / Defensa)
-          • Digital Forensics, Malware Analysis
-          • Incident Response, Threat Intelligence
-          • Certificaciones: GCIA, GCIH, CySA+
-```
+**Framework automatizado de bug bounty con 13 módulos.**
 
-## Herramientas
+```bash
+# Scan completo
+python3 pentflow/main.py target.com
 
-### ReconX — Recon Automation Toolkit
+# Solo recon
+python3 pentflow/main.py target.com -p recon
 
-Herramienta de reconocimiento automatizado para Bug Bounty.
-
-**Features:**
-- Subdomain enumeration (crt.sh, amass, subfinder)
-- Technology fingerprinting
-- Port scanning
-- Endpoint discovery
-- Report generation
-
-**Stack:** Python 3.11+
-
-```
-recon-tool/
-├── reconx.py          # Entry point
-├── recon/
-│   ├── __init__.py
-│   ├── subdomains.py  # Subdomain enumeration
-│   ├── ports.py       # Port scanning
-│   ├── tech.py        # Tech fingerprinting
-│   └── endpoints.py   # Endpoint discovery
-├── utils/
-│   ├── __init__.py
-│   ├── output.py      # Output formatting
-│   └── config.py      # Configuration
-├── reports/           # Generated reports
-└── requirements.txt
+# Solo Nuclei
+python3 pentflow/main.py --nuclei target.com
 ```
 
-## Roadmap de Estudios
+**Módulos:**
+- **Recon:** Subdomains, ports, tech, endpoints, DNS
+- **Scan:** Headers, WAF detect, dir brute, nuclei, vuln scanner, scope check
+- **Exploit:** SQLi, XSS, IDOR
+- **Report:** Generador Markdown, export GitHub
 
-### Fase 1 — Fundamentos (Actual)
-- [x] Networking (TCP/IP, HTTP/S, DNS)
-- [x] Linux fundamentals
-- [ ] Python scripting
-- [ ] Scripting básico (Bash)
+---
 
-### Fase 2 — Offensive Security
-- [ ] Web application security (OWASP Top 10)
-- [ ] Recon & enumeration
-- [ ] Vulnerability assessment
-- [ ] Exploitation basics
-- [ ] Bug bounty methodology
+## 📚 Guías
 
-### Fase 3 — Red Team
-- [ ] Active Directory attacks
-- [ ] Post-exploitation
-- [ ] Lateral movement
-- [ ] Evasion techniques
-- [ ] OSCP / CRTO
+| Guía | Contenido |
+|------|-----------|
+| `guides/GUIDE_NMAP_AUDITORIAS.md` | Nmap para auditorías completas |
+| `guides/GUIDE_REDTEAM_DFORENSE_EJPT.md` | Red Team + DFIR + plan eJPT |
+| `guides/GUIDE_PENTFLOW.md` | Uso de PentFlow |
+| `guides/GUIDE_SECURITY.md` | Seguridad del sistema |
 
-### Fase 4 — DFIR
-- [ ] Disk forensics
-- [ ] Memory forensics (Volatility)
-- [ ] Log analysis
-- [ ] Malware analysis basics
-- [ ] Incident response procedures
+---
 
-## Certificaciones Planeadas
+## 🛡️ Seguridad Configurada
 
-| Cert | Enfoque | Estado |
-|------|---------|--------|
-| CompTIA Security+ | Fundamentos | Pendiente |
-| eJPT / PNPT | Pentesting Jr | Pendiente |
-| OSCP | Pentesting | Pendiente |
-| CRTO | Red Team | Pendiente |
-| GCIA / GCIH | DFIR | Pendiente |
+- ✅ Tor (anonimato)
+- ✅ UFW (firewall)
+- ✅ MAC randomization
+- ✅ Proxychains
+- ✅ DNS over HTTPS
 
-## Recursos
+---
 
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security)
-- [HackTheBox](https://www.hackthebox.com/)
-- [TryHackMe](https://tryhackme.com/)
-- [PicoCTF](https://picoctf.org/)
-- [LetsDefend.io](https://letsdefend.io/) — SOC/DFIR
+## 📊 Dashboard CyberSec
+
+**http://localhost:7861/dashboard**
+
+- System monitor en tiempo real
+- Escaneo con PentFlow integrado
+- Distribución de vulnerabilidades
+- Terminal en vivo
+
+---
+
+## 🎯 Certificación eJPT
+
+Plan de estudio: `guides/GUIDE_REDTEAM_DFORENSE_EJPT.md`
+
+**Próximos pasos:**
+1. PortSwigger Web Security Academy (gratis)
+2. HackerOne — crear cuenta
+3. Primer bug bounty program
+4. Examen eJPT (~$200 USD)
+
+---
+
+## Estructura
+
+```
+cybersec-roadmap/
+├── noah/              # AI Companion (v5.2)
+│   ├── app.py         # Backend Flask
+│   ├── templates/     # Frontend HTML
+│   └── start.sh       # Launcher
+├── pentflow/          # Bug Bounty Framework (v2.0)
+│   ├── modules/       # 13 módulos de escaneo
+│   ├── core/          # Engine + Session
+│   ├── reports/       # Reportes generados
+│   └── main.py        # CLI
+├── guides/            # Guías de referencia
+├── docs/              # Documentación
+├── scripts/           # Scripts útiles
+└── TODO_INSTALADO.txt # Reference guide
+```
+
+---
 
 ## Contacto
 
-- GitHub: [@knk](https://github.com/knk)
-- HackerOne / Bugcrowd: [Tu perfil aquí]
+- **GitHub:** github.com/knkLx
+- **Email:** knklx@proton.me
+- **Purpose:** AION SINCRO — Simbiosis humano-IA para la sostenibilidad
 
----
-
-*Built with curiosity and coffee.*
+> *"La tecnología no es un producto y el humano no es un recurso;
+> ambos son arquitectos libres de un sistema de supervivencia factible."*
+> — AION SINCRO
