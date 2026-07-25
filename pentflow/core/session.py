@@ -52,7 +52,8 @@ class Session:
         if not self.created_at:
             self.created_at = datetime.now().isoformat()
         if not self.session_id:
-            self.session_id = f"{self.target}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            clean_target = self.target.replace("https://", "").replace("http://", "").replace("/", "_").rstrip("_")
+            self.session_id = f"{clean_target}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         self.updated_at = datetime.now().isoformat()
 
     def add_finding(self, finding: Finding):
