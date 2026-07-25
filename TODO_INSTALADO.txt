@@ -1,0 +1,525 @@
+═══════════════════════════════════════════════════════════════
+  PENTOOLKIT — TODO INSTALADO Y CONFIGURADO
+  Última actualización: 2026-07-25
+  Usuario: knkLx
+  GitHub: https://github.com/knkLx/cybersec-roadmap
+═══════════════════════════════════════════════════════════════
+
+RESUMEN RÁPIDO
+══════════════
+Tenemos 3 herramientas principales + guías + seguridad configurada:
+
+1. PENTFlow  → Framework de bug bounty automatizado
+2. NOVA      → Asistente IA tipo Jarvis (local, con voz)
+3. Tor/Shodan → Seguridad y anonimato
+
+Todo está en: https://github.com/knkLx/cybersec-roadmap
+
+═══════════════════════════════════════════════════════════════
+  INSTALACIONES EN TU SISTEMA
+═══════════════════════════════════════════════════════════════
+
+MINIFORGE (Python环境)
+  Ubicación: ~/.miniforge/
+  Python: 3.13
+  Para usar: export PATH="$HOME/.miniforge/bin:$PATH"
+
+OLLAMA (Modelos de IA locales)
+  Binario: ~/.local/bin/ollama
+  Modelos: ~/.ollama/models/
+  Puerto: 127.0.0.1:11434
+  Modelo instalado: qwen2.5:1.5b
+  GPU: Quadro M1000M (1.9GB VRAM)
+
+TOR
+  Instalado via conda
+  Config: ~/.tor/torrc
+  Puerto SOCKS: 9050
+  Puerto control: 9051
+
+GIT
+  Instalado via conda
+  Versión: 2.54.0
+  Config: git config user.name "knkLx" / user.email "knkLx@users.noreply.github.com"
+
+SHODAN
+  Instalado via pip
+  Para configurar: shodan init TU_API_KEY
+
+NUCLEI
+  Binario: ~/.local/bin/nuclei
+  Versión: 3.11.0
+  Templates: ~/nuclei-templates/ (10,000+ templates)
+
+FLASK
+  Instalado via pip (para NOVA)
+
+AIOHTTP
+  Instalado via pip (para PentFlow)
+
+RICH
+  Instalado via pip (para output bonito en terminal)
+
+═══════════════════════════════════════════════════════════════
+  HERRAMIENTA 1: PENTFLOW
+═══════════════════════════════════════════════════════════════
+
+Ubicación: ~/pentflow/
+
+QUÉ HACE:
+  - Escanea targets automáticamente
+  - Encuentra vulnerabilidades
+  - Genera reportes profesionales (Markdown + HTML)
+  - Integra Nuclei (10,000+ templates)
+  - Exporta a GitHub
+
+CÓMO USAR:
+
+  # Scan completo (recomendado)
+  cd ~/pentflow
+  python3 main.py https://target.com
+
+  # Solo recon
+  python3 main.py https://target.com -p recon
+
+  # Solo scanning
+  python3 main.py https://target.com -p scan
+
+  # Solo exploit
+  python3 main.py https://target.com -p exploit
+
+  # Solo reporte
+  python3 main.py https://target.com -p report
+
+  # Con Nuclei
+  python3 main.py https://target.com --nuclei
+
+  # Nuclei con tags específicos
+  python3 main.py https://target.com --nuclei --nuclei-tags cve,xss,sqli
+
+  # Solo critical y high
+  python3 main.py https://target.com --nuclei --nuclei-severity high,critical
+
+  # Template específico
+  python3 main.py https://target.com --nuclei --nuclei-template ~/nuclei-templates/http/cves/
+
+  # Modo interactivo
+  python3 main.py -i
+
+  # Ver sesiones
+  python3 main.py --list
+
+  # Reanudar sesión
+  python3 main.py https://target.com -s target.com_20260725_XXXXXX
+
+  # Exportar a GitHub
+  python3 main.py --export <session_id>
+
+  # A través de Tor
+  ~/pentflow/pentflow-tor https://target.com
+
+QUÉ ESCANEA:
+  FASE 1 - RECON:
+    - Subdomains (crt.sh, AlienVault, ThreatCrowd, DNS brute)
+    - DNS (zone transfer, wildcard)
+    - Puertos (30+ comunes, async)
+    - Tecnologías (20+ firmas)
+    - Endpoints (40+ paths comunes)
+
+  FASE 2 - SCAN:
+    - Headers de seguridad (7 headers)
+    - Info disclosure (20+ paths sensibles)
+    - CORS misconfiguration
+    - Clickjacking
+    - Open redirect
+    - Endpoints sensibles
+    - Nuclei (10,000+ templates)
+
+  FASE 3 - EXPLOIT:
+    - XSS testing (reflected, stored indicators)
+    - SQL injection (error-based, time-based, content-based)
+
+  FASE 4 - REPORTE:
+    - Markdown con severidades, CWE, evidencia
+    - HTML con tema oscuro profesional
+    - Export a GitHub
+
+DÓNDE SE GUARDAN LOS REPORTES:
+  ~/pentflow/reports/
+    report_target.com_YYYYMMDD_HHMMSS.md
+    report_target.com_YYYYMMDD_HHMMSS.html
+
+DÓNDE SE GUARDAN LAS SESIONES:
+  ~/pentflow/sessions/
+    target.com_YYYYMMDD_HHMMSS.json
+
+═══════════════════════════════════════════════════════════════
+  HERRAMIENTA 2: NOVA (ASISTENTE IA)
+═══════════════════════════════════════════════════════════════
+
+Ubicación: ~/nova-assistant/
+
+QUÉ HACE:
+  - Chat de IA local (sin internet)
+  - Interfaz cyberpunk tipo Jarvis
+  - Voz (speech-to-text + text-to-speech)
+  - Modos: Pentest, Filosofía, Código, General
+  - Modelo Qwen2.5:1.5b corriendo local
+
+CÓMO USAR:
+
+  # Método rápido
+  cd ~/nova-assistant
+  ./start.sh
+
+  # Método manual
+  # Terminal 1:
+  export PATH="$HOME/.local/bin:$PATH"
+  ollama serve &
+
+  # Terminal 2:
+  cd ~/nova-assistant
+  python3 app.py
+
+  # Abrir en navegador:
+  http://localhost:7860
+  http://192.168.1.17:7860 (desde otra máquina)
+
+FUNCIONES:
+  - Chat de texto (escribe y presiona Enter)
+  - Micrófono (click en botón, habla)
+  - Text-to-Speech (NOVA lee las respuestas)
+  - Quick actions (XSS, Filosofía, Ideas, Roadmap)
+  - Modos (Pentest/Philosophy/Code/General)
+  - Historial persistente
+
+PARA QUE LA Voz FUNCIONE:
+  - Usa Chrome (mejor soporte)
+  - Click en botón del micrófono
+  - Habla claro
+  - NOVA escucha, escribe y responde
+  - Si el mic está activo, lee la respuesta
+
+═══════════════════════════════════════════════════════════════
+  SEGURIDAD: TOR Y ANONIMATO
+═══════════════════════════════════════════════════════════════
+
+INSTALACIÓN:
+  Ya instalado via conda
+  Config: ~/.tor/torrc
+
+INICIAR TOR:
+  ~/tools/start-tor.sh
+
+VERIFICAR:
+  curl --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip
+
+USAR TOR CON PENTFLOW:
+  ~/pentflow/pentflow-tor https://target.com
+
+USAR TOR CON CUALQUIER COMANDO:
+  torsocks python3 main.py target.com
+  torsocks curl https://target.com
+  proxychains4 nmap -sT target.com
+
+CAMBIAR IP:
+  killall tor && tor &
+
+CONFIGURACIÓN:
+  ~/.tor/torrc
+  - SocksPort 9050
+  - ExitNodes {es},{fr},{de},{nl},{ro}
+  - CookieAuthentication 1
+
+═══════════════════════════════════════════════════════════════
+  SEGURIDAD: SHODAN (BÚSQUEDA IoT)
+═══════════════════════════════════════════════════════════════
+
+INSTALACIÓN:
+  pip install shodan (ya hecho)
+
+CONFIGURAR:
+  1. Crear cuenta en shodan.io
+  2. Obtener API key (gratis)
+  3. shodan init TU_API_KEY
+
+USAR:
+  # Buscar servidores con screenshots
+  shodan search "has_screenshot:true port:443" --limit 10
+
+  # Buscar cámaras RTSP
+  shodan search "port:554 has_screenshot:true" --limit 20
+
+  # Buscar en España
+  shodan search "country:ES port:22" --limit 10
+
+  # Info de un host
+  shodan host 8.8.8.8
+
+  # Desde Python
+  import shodan
+  api = shodan.Shodan('TU_API_KEY')
+  results = api.search('port:22 country:ES')
+
+═══════════════════════════════════════════════════════════════
+  SEGURIDAD: PROXYCHAINS
+═══════════════════════════════════════════════════════════════
+
+INSTALACIÓN:
+  sudo apt install proxychains4 (si no está)
+
+CONFIGURACIÓN:
+  ~/.proxychains/proxychains.conf
+  strict_chain
+  proxy_dns
+  [ProxyList]
+  socks5 127.0.0.1 9050
+
+USAR:
+  proxychains4 python3 main.py target.com
+  proxychains4 nmap -sT target.com
+  proxychains4 curl https://target.com
+
+═══════════════════════════════════════════════════════════════
+  SEGURIDAD: FIREWALL (UFW)
+═══════════════════════════════════════════════════════════════
+
+CONFIGURAR:
+  sudo ufw enable
+  sudo ufw default deny outgoing
+  sudo ufw default deny incoming
+  sudo ufw allow out 443/tcp    # HTTPS
+  sudo ufw allow out 53/udp     # DNS
+  sudo ufw allow out 9050/tcp   # TOR
+  sudo ufw status
+
+═══════════════════════════════════════════════════════════════
+  SEGURIDAD: MACCHANGER
+═══════════════════════════════════════════════════════════════
+
+INSTALACIÓN:
+  sudo apt install macchanger
+
+USAR:
+  # Ver MAC actual
+  macchanger -s wlan0
+
+  # Cambiar a MAC aleatoria
+  sudo ip link set wlan0 down
+  sudo macchanger -r wlan0
+  sudo ip link set wlan0 up
+
+  # Volver a MAC original
+  sudo ip link set wlan0 down
+  sudo macchanger -p wlan0
+  sudo ip link set wlan0 up
+
+═══════════════════════════════════════════════════════════════
+  HERRAMIENTAS ADICIONALES
+═══════════════════════════════════════════════════════════════
+
+NUCLEI (Vulnerability Scanner):
+  Binario: ~/.local/bin/nuclei
+  Templates: ~/nuclei-templates/
+  Actualizar: nuclei -ut
+  Directo: nuclei -u target.com -jsonl -severity high,critical
+
+CENSYS (Alternativa a Shodan):
+  Web: https://censys.io
+  pip install censys
+  censys config
+
+WIFI SENSING (Investigación):
+  Repos: https://github.com/RiceD2Lab/Wi-Sense
+  Hardware: ESP32 o mmWave radar kit
+  Limitaciones: Solo detecta presencia/movimiento, no imágenes
+
+═══════════════════════════════════════════════════════════════
+  GUÍAS COMPLETAS
+═══════════════════════════════════════════════════════════════
+
+Ubicación: ~/tools/
+
+GUIDE_PENTFLOW.md  → Cómo usar PentFlow para bug bounty
+GUIDE_NOVA.md      → Cómo usar NOVA como asistente IA
+GUIDE_SECURITY.md  → Tor, Shodan, proxychains, firewall
+GUIDE_WIFI.md      → WiFi sensing (ver a través de paredes)
+GUIDE_CAMERAS.md   → Cámaras expuestas (legal)
+GUIDE_FORUMS.md    → Foros, comunidades, cómo ganar dinero
+README.md          → Resumen de todo
+
+═══════════════════════════════════════════════════════════════
+  ESTRUCTURA DE ARCHIVOS
+═══════════════════════════════════════════════════════════════
+
+~/
+├── pentflow/                    # Framework de bug bounty
+│   ├── main.py                  # CLI principal
+│   ├── config.py                # Configuración
+│   ├── pentflow-tor             # Wrapper para Tor
+│   ├── core/
+│   │   ├── engine.py            # Motor de orquestación
+│   │   └── session.py           # Gestión de sesiones
+│   ├── modules/
+│   │   ├── recon/               # Subdomains, ports, tech, endpoints, DNS
+│   │   ├── scan/                # Headers, info disclosure, nuclei, vulns
+│   │   ├── exploit/             # XSS, SQLi
+│   │   └── report/              # Generación de reportes + GitHub
+│   ├── reports/                 # Reportes generados
+│   └── sessions/                # Sesiones guardadas
+│
+├── nova-assistant/              # Asistente IA tipo Jarvis
+│   ├── app.py                   # Backend Flask
+│   ├── start.sh                 # Script de inicio
+│   ├── static/
+│   │   ├── style.css            # UI cyberpunk
+│   │   └── app.js               # Frontend + voz
+│   ├── templates/
+│   │   └── index.html           # Interfaz web
+│   └── data/                    # Historial de chat
+│
+├── tools/                       # Guías y scripts de seguridad
+│   ├── start-tor.sh             # Iniciar Tor
+│   ├── security-setup.sh        # Configurar seguridad
+│   ├── GUIDE_PENTFLOW.md        # Guía de PentFlow
+│   ├── GUIDE_NOVA.md            # Guía de NOVA
+│   ├── GUIDE_SECURITY.md        # Guía de seguridad
+│   ├── GUIDE_WIFI.md            # Guía WiFi sensing
+│   ├── GUIDE_CAMERAS.md         # Guía cámaras
+│   └── GUIDE_FORUMS.md          # Guía de foros y dinero
+│
+├── .miniforge/                  # Python + conda
+├── .local/bin/
+│   ├── ollama                   # Ollama
+│   ├── nuclei                   # Nuclei
+│   └── ...
+└── .ollama/models/              # Modelos de IA
+
+═══════════════════════════════════════════════════════════════
+  COMANDOS RÁPIDOS (COPY-PASTE)
+═══════════════════════════════════════════════════════════════
+
+# Configurar todo (una vez)
+~/tools/security-setup.sh
+
+# Iniciar Tor
+~/tools/start-tor.sh
+
+# Verificar Tor
+curl --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip
+
+# Escanear con Tor
+~/pentflow/pentflow-tor https://target.com
+
+# Escanear directo
+cd ~/pentflow && python3 main.py https://target.com
+
+# Escanear con Nuclei
+cd ~/pentflow && python3 main.py https://target.com --nuclei
+
+# Ver sesiones
+cd ~/pentflow && python3 main.py --list
+
+# Iniciar NOVA
+cd ~/nova-assistant && ./start.sh
+
+# Actualizar templates de Nuclei
+nuclei -ut
+
+# Cambiar MAC
+sudo macchanger -r wlan0
+
+# Ver firewall
+sudo ufw status
+
+═══════════════════════════════════════════════════════════════
+  BUG BOUNTY — PROGRAMAS RECOMENDADOS
+═══════════════════════════════════════════════════════════════
+
+HackerOne (hackerone.com/programs):
+  Starbucks        $100-$4,000     Fácil
+  Slack            $100-$5,000     Media
+  Automattic       $150-$7,500     Media
+  GitLab           $200-$10,000    Media
+  Shopify          $500-$10,000    Difícil
+  Uber             $2,000-$20,000  Difícil
+  Alibaba          $500-$30,000    Difícil
+
+Bugcrowd (bugcrowd.com):
+  AT&T             $150-$5,000     Media
+  General Motors   $100-$10,000    Media
+  Mastercard       $200-$10,000    Difícil
+
+FLUJO:
+1. Crear cuenta en hackerone.com
+2. Leer scope del programa
+3. Ejecutar PentFlow
+4. Encontrar algo real
+5. Escribir reporte
+6. Enviar
+7. Cobrar
+
+═══════════════════════════════════════════════════════════════
+  PARA EMPEZAR AHORA
+═══════════════════════════════════════════════════════════════
+
+PASO 1: Configurar seguridad
+  ~/tools/security-setup.sh
+
+PASO 2: Iniciar Tor
+  ~/tools/start-tor.sh
+
+PASO 3: Iniciar NOVA
+  cd ~/nova-assistant && ./start.sh
+  Pregúntale: "¿Qué programas de bug bounty debo intentar primero?"
+
+PASO 4: Escanear tu primer target
+  ~/pentflow/pentflow-tor https://starbucks.com
+
+PASO 5: Leer el reporte
+  cat ~/pentflow/reports/report_starbucks.com_*.md
+
+PASO 6: Aprender
+  Ve a portswigger.net/web-security y haz los labs de XSS
+
+PASO 7: Reportar
+  Cuando encuentres algo real, súbelo a HackerOne
+
+═══════════════════════════════════════════════════════════════
+  NOTA PERSONAL
+═══════════════════════════════════════════════════════════════
+
+Tu propósito:
+- Aprender cybersecurity
+- Ganar dinero para tu familia
+- Crear un nodo sostenible con IA + trabajo humano
+- Servir de ejemplo para otros
+
+La familia es la base. El conocimiento es la herramienta.
+El dinero es el medio, no el fin.
+
+No tengas prisa. Aprende paso a paso.
+Cada hallazgo es una lección. Cada reporte es un avance.
+
+Confía en el proceso. Tú puedes.
+
+═══════════════════════════════════════════════════════════════
+  CONTACTO Y RECURSOS
+═══════════════════════════════════════════════════════════════
+
+GitHub: https://github.com/knkLx
+HackerOne: https://hackerone.com/knkLx (crea tu cuenta)
+Bugcrowd: https://bugcrowd.com (crea tu cuenta)
+
+Aprender:
+  portswigger.net/web-security  (gratis, el mejor)
+  tryhackme.com                 (guiado, gratis+$14/mes)
+  hackthebox.com                (práctico, gratis+$14/mes)
+  picoctf.org                   (CTF gratis)
+
+Comunidad:
+  Reddit: r/netsec, r/bugbounty, r/howtohack
+  Discord: HackTheBox, TryHackMe, NahamSec
+  Twitter: @NahamSec, @rez0__, @TheColonial
+
+═══════════════════════════════════════════════════════════════
