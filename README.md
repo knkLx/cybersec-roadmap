@@ -2,10 +2,13 @@
 
 > Herramientas de ciberseguridad, IA local, y automatización de bug bounty.
 > Todo local, sin APIs de pago, 100% open source.
+> Filosofía: AION SINCRO — Simbiosis humano-IA para la sostenibilidad.
 
-## 🚀 NOAH — AI Companion
+---
 
-**Tu asistente IA personal con control total del escritorio.**
+## 🚀 NOAH — AI Companion (AION SINCRO)
+
+**Tu asistente IA personal con identidad propia.**
 
 ```bash
 # Arrancar
@@ -19,23 +22,32 @@ http://localhost:7861/dashboard # CyberSec Dashboard
 **Características:**
 - Chat con qwen2.5:1.5b (local, 3s respuesta)
 - Voz Piper TTS (Daniela — voz femenina)
-- Wake word "Hey NOAH"
+- Identity: AION SINCRO — simbiosis humano-IA
 - Control del escritorio: abrir apps, ejecutar código, bash
 - Búsqueda web: NVD CVE, GitHub, Wikipedia
 - Notas y memoria persistente
 - Dashboard cybersecurity en tiempo real
-- VTuber avatar con emociones
 
-**Comandos:**
-| Comando | Acción |
-|---------|--------|
-| `/open firefox` | Abrir aplicación |
-| `/bash ls -la` | Ejecutar bash |
-| `/run print(42)` | Ejecutar Python |
-| `/search CVE python` | Buscar en web |
-| `/system` | Info del sistema |
-| `/remember fact` | Guardar memoria |
-| `/note title\|content` | Crear nota |
+---
+
+## 🤖 JIMMY — Agente Autónomo
+
+**Agente que EJECUTA, BUSCA, y TRABAJA. No es un chatbot.**
+
+```bash
+# Modo interactivo
+python3 ~/jimmy/jimmy.py
+
+# Modo tarea directa
+python3 ~/jimmy/jimmy.py "ejecuta: comando aqui"
+python3 ~/jimmy/jimmy.py "ejecuta python: codigo aqui"
+```
+
+**Herramientas:**
+- Ejecutar bash y Python
+- Leer/escribir archivos
+- Búsqueda web (GitHub API)
+- Memoria persistente
 
 ---
 
@@ -67,7 +79,6 @@ python3 pentflow/main.py --nuclei target.com
 | Guía | Contenido |
 |------|-----------|
 | `guides/GUIDE_NMAP_AUDITORIAS.md` | Nmap para auditorías completas |
-| `guides/GUIDE_REDTEAM_DFORENSE_EJPT.md` | Red Team + DFIR + plan eJPT |
 | `guides/GUIDE_PENTFLOW.md` | Uso de PentFlow |
 | `guides/GUIDE_SECURITY.md` | Seguridad del sistema |
 
@@ -94,11 +105,8 @@ python3 pentflow/main.py --nuclei target.com
 
 ---
 
-## 🎯 Certificación eJPT
+## 🎯 Próximos Pasos
 
-Plan de estudio: `guides/GUIDE_REDTEAM_DFORENSE_EJPT.md`
-
-**Próximos pasos:**
 1. PortSwigger Web Security Academy (gratis)
 2. HackerOne — crear cuenta
 3. Primer bug bounty program
@@ -110,7 +118,7 @@ Plan de estudio: `guides/GUIDE_REDTEAM_DFORENSE_EJPT.md`
 
 ```
 cybersec-roadmap/
-├── noah/              # AI Companion (v5.2)
+├── noah/              # AI Companion (AION SINCRO)
 │   ├── app.py         # Backend Flask
 │   ├── templates/     # Frontend HTML
 │   └── start.sh       # Launcher
@@ -120,8 +128,7 @@ cybersec-roadmap/
 │   ├── reports/       # Reportes generados
 │   └── main.py        # CLI
 ├── guides/            # Guías de referencia
-├── docs/              # Documentación
-├── scripts/           # Scripts útiles
+├── tools/             # Scripts y herramientas
 └── TODO_INSTALADO.txt # Reference guide
 ```
 

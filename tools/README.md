@@ -7,7 +7,6 @@
 ├── start-tor.sh              # Iniciar Tor
 ├── security-setup.sh         # Configurar seguridad completa
 ├── GUIDE_PENTFLOW.md         # Guía completa de PentFlow
-├── GUIDE_NOVA.md             # Guía completa de NOVA
 ├── GUIDE_SECURITY.md         # Guía de Tor, Shodan, proxychains
 ├── GUIDE_WIFI.md             # WiFi sensing (ver a través de paredes)
 ├── GUIDE_CAMERAS.md          # Cámaras expuestas (legal)
@@ -18,10 +17,9 @@
 ├── pentflow-tor              # Escanear a través de Tor
 └── ...
 
-~/nova-assistant/
-├── app.py                    # NOVA AI assistant
-├── start.sh                  # Iniciar NOVA
-└── ...
+~/jimmy/
+├── jimmy.py                  # Agente autónomo AION SINCRO
+└── start.sh                  # Iniciar Jimmy
 ```
 
 ## Inicio Rápido
@@ -36,8 +34,11 @@
 # 3. Escanear con Tor
 ~/pentflow/pentflow-tor https://target.com
 
-# 4. Iniciar NOVA
-cd ~/nova-assistant && ./start.sh
+# 4. Usar Jimmy (agente autónomo)
+python3 ~/jimmy/jimmy.py "ejecuta: comando"
+
+# 5. Iniciar NOAH (compañero IA)
+bash ~/noah/start.sh
 ```
 
 ## Guías
@@ -45,7 +46,6 @@ cd ~/nova-assistant && ./start.sh
 | Guía | Para qué |
 |------|----------|
 | GUIDE_PENTFLOW.md | Cómo usar PentFlow para bug bounty |
-| GUIDE_NOVA.md | Cómo usar NOVA como tu asistente IA |
 | GUIDE_SECURITY.md | Tor, Shodan, proxychains, firewall |
 | GUIDE_WIFI.md | WiFi sensing y detección de presencia |
 | GUIDE_CAMERAS.md | Encontrar cámaras expuestas (legal) |
@@ -53,7 +53,7 @@ cd ~/nova-assistant && ./start.sh
 
 ## Tus Propósitos
 
-1. **Aprender cybersecurity** → PentFlow + NOVA + guías
+1. **Aprender cybersecurity** → PentFlow + Jimmy + guías
 2. **Ganar dinero** → Bug bounty, freelance, CTFs
 3. **Proteger tu familia** → Seguridad en tu red
 4. **Crear un nodo sostenible** → IA + trabajo humano

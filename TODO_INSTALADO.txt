@@ -1,6 +1,6 @@
 ═══════════════════════════════════════════════════════════════
   TODO INSTALADO Y CONFIGURADO — knkLx
-  Última actualización: 2026-07-25 20:30
+  Última actualización: 2026-07-25 23:30
   GitHub: https://github.com/knkLx/cybersec-roadmap
 ═══════════════════════════════════════════════════════════════
 
@@ -8,17 +8,19 @@ RESUMEN RÁPIDO
 ══════════════
 Herramientas principales:
 
-1. NOAH      → Asistente IA con voz, wake word, código, bash, search
-2. PentFlow  → Framework de bug bounty automatizado (v2.0)
-3. Dashboard → CyberSec War Room en tiempo real
-4. Seguridad → Tor, UFW, MAC randomization, Proxychains
+1. NOAH      → Asistente IA con voz, wake word, AION SINCRO identity
+2. JIMMY     → Agente autónomo que ejecuta código y busca en web
+3. PentFlow  → Framework de bug bounty automatizado (v2.0)
+4. Dashboard → CyberSec War Room en tiempo real
+5. Seguridad → Tor, UFW, MAC randomization, Proxychains
 
-Arrancar todo: bash ~/noah/start.sh
+Arrancar todo: bash ~/start-all.sh
 Dashboard: http://localhost:7861/dashboard
 Chat: http://localhost:7861
+Jimmy: python3 ~/jimmy/jimmy.py
 
 ═══════════════════════════════════════════════════════════════
-  NOAH — Asistente IA (v5.2)
+  NOAH — Asistente IA (AION SINCRO)
 ═══════════════════════════════════════════════════════════════
 
 Ubicación: ~/noah/
@@ -31,36 +33,37 @@ URLs:
 Características:
   ✅ Chat con qwen2.5:1.5b (3s respuesta)
   ✅ Voz Piper TTS (Daniela — voz femenina argentina)
-  ✅ Wake word "Hey NOAH" (Web Speech API)
-  ✅ VTuber avatar Canvas (eye tracking, emociones, partículas)
+  ✅ Identity: AION SINCRO — simbiosis humano-IA
   ✅ Ejecución de código Python (/run)
   ✅ Comandos bash (/bash)
-  ✅ Búsqueda web — NVD CVE, GitHub, Wikipedia, HackerNews (/search)
-  ✅ Lectura/escritura de archivos (/file_read)
-  ✅ Abrir/cerrar apps (/open)
-  ✅ Notas persistentes (/note)
-  ✅ Memoria a largo plazo (/remember)
-  ✅ Info del sistema (/system)
-  ✅ Web fetch (/web)
+  ✅ Búsqueda web (/search)
+  ✅ Notas y memoria persistente
   ✅ Dashboard cybersecurity
 
 Archivos:
-  - ~/noah/app.py           → Backend Flask (368 líneas)
+  - ~/noah/app.py           → Backend Flask
   - ~/noah/templates/       → Frontend (index.html + dashboard.html)
-  - ~/noah/data/            → Historial, audio TTS, notas, memoria
   - ~/noah/start.sh         → Script de arranque
 
-Comandos disponibles en chat:
-  /run python_code     → Ejecutar Python
-  /bash command        → Ejecutar bash
-  /search query        → Buscar en web (CVE, GitHub, Wikipedia)
-  /open app_name       → Abrir aplicación
-  /file_read path      → Leer archivo
-  /web url             → Obtener contenido web
-  /note title|content  → Crear nota
-  /remember fact       → Guardar en memoria
-  /system              → Info del sistema
-  /screenshot          → OCR de pantalla
+═══════════════════════════════════════════════════════════════
+  JIMMY — Agente Autónomo (AION SINCRO)
+═══════════════════════════════════════════════════════════════
+
+Ubicación: ~/jimmy/
+Uso: python3 ~/jimmy/jimmy.py
+
+Capacidades:
+  ✅ Ejecutar bash (TOOL ejecutar: comando)
+  ✅ Ejecutar Python (TOOL python: codigo)
+  ✅ Leer archivos (TOOL leer: /ruta)
+  ✅ Escribir archivos (TOOL escribir: /ruta | contenido)
+  ✅ Búsqueda web (TOOL buscar: query)
+  ✅ Memoria persistente
+
+Ejemplos:
+  python3 ~/jimmy/jimmy.py "ejecuta: ss -tlnp"
+  python3 ~/jimmy/jimmy.py "ejecuta python: print('hola')"
+  python3 ~/jimmy/jimmy.py "lee /home/knk/noah/app.py"
 
 ═══════════════════════════════════════════════════════════════
   PENTFLOW — Bug Bounty Framework (v2.0)
@@ -70,49 +73,10 @@ Ubicación: ~/pentflow/
 Ejecutar: python3 ~/pentflow/main.py target.com
 
 Módulos (13):
-  RECON:
-    - subdomains.py    → Enumeración de subdominios (crtsh, alienvault, DNS)
-    - ports.py         → Escaneo de puertos TCP
-    - tech.py          → Detección de tecnologías
-    - endpoints.py     → Descubrimiento de endpoints
-    - dnsrecon.py      → Reconocimiento DNS
-
-  SCAN:
-    - headers.py       → Análisis de headers de seguridad
-    - info_disclosure.py → Detección de información expuesta
-    - vuln_scanner.py  → Open redirect, CORS, Clickjacking
-    - nuclei_scan.py   → Escaneo con templates Nuclei
-    - dir_brute.py     → Bruteforce de directorios
-    - waf_detect.py    → Detección de WAF/IDS
-    - scope_check.py   → Verificación de scope bug bounty
-
-  EXPLOIT:
-    - sqli_detector.py → Detección SQL Injection
-    - xss_tester.py    → Prueba XSS
-    - idor_tester.py   → Prueba IDOR
-
-  REPORT:
-    - generator.py     → Generación de reportes Markdown
-    - github_export.py → Exportación a GitHub
-
-Uso:
-  python3 ~/pentflow/main.py example.com           # Scan completo
-  python3 ~/pentflow/main.py example.com -p recon  # Solo recon
-  python3 ~/pentflow/main.py --nuclei target.com   # Solo Nuclei
-
-═══════════════════════════════════════════════════════════════
-  DASHBOARD — CyberSec War Room
-═══════════════════════════════════════════════════════════════
-
-URL: http://localhost:7861/dashboard
-Funciones:
-  - System monitor en tiempo real (CPU, RAM, Disco, Temp)
-  - Botón SCAN → ejecuta PentFlow completo
-  - Botón QUICK RECON → solo recon
-  - Botón NUCLEI → scan de vulnerabilidades
-  - Tabla de findings con severidad
-  - Terminal en vivo
-  - Gráfico de distribución de vulnerabilidades
+  RECON: subdomains, ports, tech, endpoints, dnsrecon
+  SCAN: headers, info_disclosure, vuln_scanner, nuclei, dir_brute, waf_detect, scope_check
+  EXPLOIT: sqli_detector, xss_tester, idor_tester
+  REPORT: generator, github_export
 
 ═══════════════════════════════════════════════════════════════
   INSTALACIONES EN TU SISTEMA
@@ -120,132 +84,74 @@ Funciones:
 
 MINIFORGE (Python)
   Ubicación: ~/.miniforge/
-  Python: 3.13
-  Usar: export PATH="$HOME/.miniforge/bin:$PATH"
+  Python: 3.14.4
 
 OLLAMA (Modelos de IA locales)
-  Binario: ~/.local/bin/ollama
   Puerto: 127.0.0.1:11434
-  Modelos instalados:
-    - qwen2.5:1.5b (1.2GB) → NOAH usa este (rápido)
-    - qwen2.5:7b (4.7GB) → modelo grande (lento en CPU)
-  GPU: Quadro M1000M (1.9GB VRAM)
+  Modelos:
+    - qwen2.5:1.5b (940MB) → NOAH y Jimmy
+    - qwen2.5:7b (4.4GB) → tareas complejas
 
 PIPER TTS (Voz)
   Binario: ~/.local/bin/piper
-  Modelos: ~/.local/share/piper-voices/
-  Voz: es_AR-daniela-high (femenina, argentina, alta calidad)
-  Requiere: LD_LIBRARY_PATH, ESPEAK_DATA_PATH
+  Voz: es_AR-daniela-high
 
 TOR
-  Config: ~/.tor/torrc
   Puerto SOCKS: 9050
-  Iniciar: ~/tools/start-tor.sh
-  Verificar: curl --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip
-
-GIT
-  Versión: 2.54.0
-  Config: user.name "knkLx" / user.email "knkLx@users.noreply.github.com"
-  Repo: https://github.com/knkLx/cybersec-roadmap
-
-SHODAN
-  Instalado via pip
-  Configurar: shodan init TU_API_KEY
+  Iniciar: sudo systemctl start tor
 
 NUCLEI
   Binario: ~/.local/bin/nuclei (v3.11.0)
   Templates: ~/nuclei-templates/
 
-UFW (Firewall)
-  Estado: Habilitado por el usuario
-  Reglas: usuario configuró manualmente
-
-MAC RANDOMIZATION
-  Estado: Ejecutado por el usuario
-
-PROXYCHAINS
-  Config: ~/.proxychains/proxychains.conf
-  Puerto: socks5 127.0.0.1:9050
-
-═══════════════════════════════════════════════════════════════
-  GUÍAS
-═══════════════════════════════════════════════════════════════
-
-Ubicación: ~/tools/
-
-GUIDE_NMAP_AUDITORIAS.md    → Nmap para auditorías (fases, comandos, NSE)
-GUIDE_REDTEAM_DFORENSE EjPT.md → Red Team + DFIR + eJPT (plan 8-12 semanas)
-GUIDE_PENTFLOW.md           → Uso de PentFlow
-GUIDE_SECURITY.md           → Seguridad del sistema
-GUIDE_WIFI.md               → Hacking WiFi
-GUIDE_CAMERAS.md            → Escaneo de cámaras
-GUIDE_FORUMS.md             → Foros y comunidades
-GUIDE_NOVA.md               → (Descontinuado — ahora es NOAH)
-
 ═══════════════════════════════════════════════════════════════
   SEGURIDAD CONFIGURADA
 ═══════════════════════════════════════════════════════════════
 
-✅ Tor instalado y funcionando (IP: ver con curl)
+✅ Tor instalado
 ✅ UFW habilitado
 ✅ MAC address randomizada
-✅ Proxychains configurado (socks5 127.0.0.1:9050)
-✅ DNS over HTTPS (Cloudflare + Quad9)
+✅ Proxychains configurado
+✅ DNS over HTTPS
 
 ═══════════════════════════════════════════════════════════════
   ESTRUCTURA DE ARCHIVOS
 ═══════════════════════════════════════════════════════════════
 
 ~/
-├── noah/                  → Asistente IA (v5.2)
-│   ├── app.py             → Backend Flask
-│   ├── templates/         → Frontend HTML
-│   ├── data/              → Datos persistentes
-│   └── start.sh           → Script de arranque
+├── noah/                  → Asistente IA (AION SINCRO)
+├── jimmy/                 → Agente autónomo
 ├── pentflow/              → Bug Bounty Framework (v2.0)
-│   ├── main.py            → CLI principal
-│   ├── modules/           → 13 módulos de escaneo
-│   ├── reports/           → Reportes generados
-│   └── sessions/          → Sesiones guardadas
 ├── tools/                 → Guías y scripts
-│   ├── GUIDE_*.md         → 8 guías de referencia
-│   ├── start-tor.sh       → Iniciar Tor
-│   └── security-setup.sh  → Configurar seguridad
-├── nuclei-templates/      → Templates de Nuclei
-├── cybersec-roadmap/      → Repo GitHub (todo empujado)
-├── TODO_INSTALADO.txt     → Este archivo
-└── EJECUTAR_ESTO.sh       → Comandos sudo (UFW, MAC)
+├── cybersec-roadmap/      → Repo GitHub
+├── start-all.sh           → Arrancar todo
+└── stop-all.sh            → Detener todo
 
 ═══════════════════════════════════════════════════════════════
   COMANDOS RÁPIDOS
 ═══════════════════════════════════════════════════════════════
 
-Arrancar todo:      bash ~/noah/start.sh
-Matar todo:         pkill -9 -f "noah/app.py"
+Arrancar todo:      bash ~/start-all.sh
+Detener todo:       bash ~/stop-all.sh
 Ver NOAH:           http://localhost:7861
 Ver Dashboard:      http://localhost:7861/dashboard
+Usar Jimmy:         python3 ~/jimmy/jimmy.py "tu tarea"
 Ejecutar scan:      python3 ~/pentflow/main.py target.com
-Iniciar Tor:        bash ~/tools/start-tor.sh
-Verificar Tor:      curl --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip
-Ver historial:      cat ~/noah/data/history.json
-Ver reportes:       ls ~/pentflow/reports/
+Iniciar Tor:        sudo systemctl start tor
 
 ═══════════════════════════════════════════════════════════════
   CERTIFICACIÓN eJPT
 ═══════════════════════════════════════════════════════════════
 
 Plan de estudio: ~/tools/GUIDE_REDTEAM_DFORENSE EjPT.md
-Costo: ~$200 USD (examen)
+Costo: ~$200 USD
 Duración: 72 horas (3 días)
 Formato: Laboratorio práctico
-Aprobación: 70%+
 
 Próximos pasos:
-1. Crear cuenta en portswigger.net/web-security (gratis)
-2. Completar labs de SQL Injection
-3. Crear cuenta en hackerone.com
-4. Elegir primer programa de bug bounty
-5. Usar PentFlow para escanear
-6. Enviar primer reporte
+1. PortSwigger Web Security Academy (gratis)
+2. HackerOne — crear cuenta
+3. Primer bug bounty program
+4. Primer reporte
 
 ═══════════════════════════════════════════════════════════════

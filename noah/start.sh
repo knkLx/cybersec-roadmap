@@ -22,7 +22,6 @@ echo ""
 # Kill previous instances
 echo "[1/4] Cleaning previous processes..."
 pkill -9 -f "noah/app.py" 2>/dev/null
-pkill -9 -f "aria/app.py" 2>/dev/null
 sleep 1
 echo "  ✓ Clean"
 
