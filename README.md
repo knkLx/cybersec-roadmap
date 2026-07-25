@@ -1,6 +1,6 @@
 # Cybersec Roadmap
 
-Estudiante de ciberseguridad en camino hacia **Red Team** y **DFIR** (Digital Forensics and Incident Response). Cursando un máster universitario mientras construyo conocimiento de forma autodidacta y desarrollo herramientas para Bug Bounty.
+Estudiante de ciberseguridad en camino hacia **Red Team** y **DFIR** (Digital Forensics and Incident Response). Cursando un máster mientras construyo conocimiento de forma autodidacta y desarrollo herramientas para Bug Bounty.
 
 ---
 
