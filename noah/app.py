@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""NOAH v5.2 — Fast, functional, beautiful."""
+"""NOAH v5.3 — SQLite Memory + Jimmy-inspired AI Companion"""
 
 import json, os, re, subprocess, sys, glob, psutil, requests
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, Response, send_file
 from flask_socketio import SocketIO
+from memory_db import get_memory, NoahMemory
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
-MODEL = os.getenv("NOAH_MODEL", "qwen2.5:1.5b")  # FAST model
+MODEL = os.getenv("NOAH_MODEL", "qwen2.5:1.5b")
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
 HISTORY_FILE = DATA_DIR / "history.json"
@@ -93,7 +94,7 @@ def detect_emotion(text):
 def load_history():
     if HISTORY_FILE.exists():
         try: return json.loads(HISTORY_FILE.read_text())
-        except: pass
+        except Exception: pass
     return []
 
 def save_history(h):
@@ -103,7 +104,7 @@ def load_memory():
     f = MEMORY_DIR / "facts.json"
     if f.exists():
         try: return json.loads(f.read_text())
-        except: pass
+        except Exception: pass
     return []
 
 def save_memory(facts):
@@ -120,7 +121,7 @@ def get_apps():
                         n = re.search(r"Name=(.+)", c)
                         e = re.search(r"Exec=(.+)", c)
                         if n and e: apps.append({"name": n.group(1).strip(), "exec": e.group(1).strip().split()[0]})
-                except: pass
+                except Exception: pass
     return apps
 
 @app.route("/")
@@ -177,8 +178,74 @@ def chat():
     memory = load_memory()
     user_emotion = detect_emotion(msg)
 
+    # Simple JSON response mode for the new GUI
+    if data.get("simple"):
+        blackbox_content = ""
+        blackbox_path = DATA_DIR / "blackbox.md"
+        if blackbox_path.exists():
+            try: blackbox_content = blackbox_path.read_text()
+            except: pass
+
+        mem_ctx = "\n".join([f"- {m['fact']}" for m in memory[-15:]]) if memory else ""
+        sys_prompt = SYSTEM_PROMPT
+        if blackbox_content:
+            sys_prompt += f"\n\n## Caja Negra (memoria persistente):\n{blackbox_content}"
+        if mem_ctx:
+            sys_prompt += f"\n\n## Memoria reciente:\n{mem_ctx}"
+
+        messages = [{"role": "system", "content": sys_prompt}]
+        for m in history[-25:]: messages.append({"role": m["role"], "content": m["content"]})
+        messages.append({"role": "user", "content": msg})
+
+        try:
+            with requests.post(f"{OLLAMA_URL}/api/chat", json={
+                "model": MODEL, "messages": messages, "stream": False,
+                "options": {"temperature": 0.85, "top_p": 0.92, "num_ctx": 4096, "repeat_penalty": 1.1}
+            }, timeout=60) as r:
+                result = r.json()
+                full = result.get("message", {}).get("content", "")
+                emotion = detect_emotion(full)
+                history.append({"role": "user", "content": msg, "time": datetime.now().isoformat()})
+                history.append({"role": "assistant", "content": full, "time": datetime.now().isoformat()})
+                save_history(history)
+                return jsonify({"response": full, "emotion": emotion})
+        except Exception as e:
+            return jsonify({"response": f"Error: {str(e)}", "emotion": "worried"})
+
+    # SSE mode (original)
+    blackbox_content = ""
+    blackbox_path = DATA_DIR / "blackbox.md"
+    if blackbox_path.exists():
+        try: blackbox_content = blackbox_path.read_text()
+        except: pass
+
     mem_ctx = "\n".join([f"- {m['fact']}" for m in memory[-15:]]) if memory else ""
-    sys_prompt = SYSTEM_PROMPT + (f"\n\nMemoria: {mem_ctx}" if mem_ctx else "")
+    sys_prompt = SYSTEM_PROMPT
+    if blackbox_content:
+        sys_prompt += f"\n\n## Caja Negra (memoria persistente):\n{blackbox_content}"
+    if mem_ctx:
+        sys_prompt += f"\n\n## Memoria reciente:\n{mem_ctx}"
+
+    messages = [{"role": "system", "content": sys_prompt}]
+    for m in history[-25:]: messages.append({"role": m["role"], "content": m["content"]})
+    messages.append({"role": "user", "content": msg})
+    history.append({"role": "user", "content": msg, "time": datetime.now().isoformat()})
+
+    # Load blackbox for persistent context
+    blackbox_content = ""
+    blackbox_path = DATA_DIR / "blackbox.md"
+    if blackbox_path.exists():
+        try:
+            blackbox_content = blackbox_path.read_text()
+        except Exception:
+            pass
+
+    mem_ctx = "\n".join([f"- {m['fact']}" for m in memory[-15:]]) if memory else ""
+    sys_prompt = SYSTEM_PROMPT
+    if blackbox_content:
+        sys_prompt += f"\n\n## Caja Negra (memoria persistente):\n{blackbox_content}"
+    if mem_ctx:
+        sys_prompt += f"\n\n## Memoria reciente:\n{mem_ctx}"
 
     messages = [{"role": "system", "content": sys_prompt}]
     for m in history[-25:]: messages.append({"role": m["role"], "content": m["content"]})
@@ -208,6 +275,10 @@ def chat():
                                 tools.append({"tool": t[0], "args": t[1]})
                             history.append({"role": "assistant", "content": full, "time": datetime.now().isoformat()})
                             save_history(history)
+
+                            # Update blackbox with conversation summary
+                            _update_blackbox(msg, full[:300], emotion)
+
                             yield f"data: {json.dumps({'done': True, 'emotion': emotion, 'tools': tools})}\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'content': f'Error: {str(e)}'})}\n\n"
@@ -217,6 +288,40 @@ def chat():
         yield f"data: {json.dumps({'user_emotion': user_emotion})}\n\n"
         yield from generate()
     return Response(wrapped(), mimetype="text/event-stream")
+
+
+def _update_blackbox(user_msg, noah_response, emotion):
+    """Update the blackbox with conversation summary"""
+    blackbox_path = DATA_DIR / "blackbox.md"
+    if not blackbox_path.exists():
+        return
+
+    try:
+        content = blackbox_path.read_text()
+
+        # Add conversation entry
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+        entry = f"\n- [{timestamp}] Ark: {user_msg[:100]} | Noah: {noah_response[:100]} | Emoción: {emotion}"
+
+        # Find the "Notas para la Próxima Sesión" section and append
+        if "## Notas para la Próxima Sesión" in content:
+            content = content.replace(
+                "## Notas para la Próxima Sesión",
+                f"## Notas para la Próxima Sesión{entry}"
+            )
+        else:
+            content += f"\n\n## Notas para la Próxima Sesión{entry}"
+
+        # Update timestamp
+        content = content.replace(
+            content.split("## Estado Actual")[1].split("\n")[1] if "## Estado Actual" in content else "",
+            f"- Última sesión: {timestamp}"
+        )
+
+        blackbox_path.write_text(content)
+    except Exception:
+        pass  # Don't crash if blackbox update fails
+
 
 @app.route("/api/execute", methods=["POST"])
 def execute_code():
@@ -263,26 +368,26 @@ def web_search():
             for v in r.json().get("vulnerabilities",[]):
                 c = v.get("cve",{})
                 results.append({"title":c.get("id",""),"url":f"https://nvd.nist.gov/vuln/detail/{c.get('id','')}","snippet":c.get("descriptions",[{}])[0].get("value","")[:150],"source":"NVD"})
-        except: pass
+        except Exception: pass
     if any(k in q for k in ["github","repo","code","script"]):
         try:
             r = requests.get("https://api.github.com/search/repositories", params={"q":query,"sort":"stars","per_page":5}, timeout=15)
             for i in r.json().get("items",[]):
                 results.append({"title":f"{i['full_name']} ({i['stargazers_count']}★)","url":i["html_url"],"snippet":(i.get("description") or "")[:150],"source":"GitHub"})
-        except: pass
+        except Exception: pass
     try:
         r = requests.get("https://es.wikipedia.org/api/rest_v1/page/summary/"+query.replace(" ","_"), timeout=10)
         if r.status_code==200:
             d=r.json()
             results.append({"title":d.get("title",query),"url":d.get("content_urls",{}).get("desktop",{}).get("page",""),"snippet":d.get("extract","")[:200],"source":"Wikipedia"})
-    except: pass
+    except Exception: pass
     if not results:
         try:
             r = requests.get("https://es.wikipedia.org/w/api.php", params={"action":"query","list":"search","srsearch":query,"format":"json","srlimit":3}, timeout=10)
             for s in r.json().get("query",{}).get("search",[]):
                 t=s.get("title","")
                 results.append({"title":t,"url":f"https://es.wikipedia.org/wiki/{t.replace(' ','_')}","snippet":re.sub(r'<[^>]+>','',s.get("snippet",""))[:200],"source":"Wikipedia"})
-        except: pass
+        except Exception: pass
     return jsonify({"results":results[:10],"query":query})
 
 @app.route("/api/webfetch", methods=["POST"])
@@ -352,10 +457,138 @@ def system_info():
                 i=p.info
                 if i['cpu_percent'] and i['cpu_percent']>0.5:
                     procs.append({"pid":i['pid'],"name":i['name'][:20],"cpu":round(i['cpu_percent'],1),"mem":round(i['memory_percent'],1)})
-            except: pass
+            except Exception: pass
         procs.sort(key=lambda x:x['cpu'],reverse=True)
-        return jsonify({"cpu":cpu,"cpu_temp":cpu_temp,"ram_used":mem.percent,"ram_total":f"{mem.total//(1024**3):.1f}GB","ram_free":f"{mem.available//(1024**3):.1f}GB","disk_used":disk.percent,"disk_total":f"{disk.total//(1024**3):.0f}GB","net_sent":f"{net.bytes_sent//(1024**2):.0f}MB","net_recv":f"{net.bytes_recv//(1024**2):.0f}MB","uptime":f"{int((datetime.now()-datetime.fromtimestamp(psutil.boot_time())).total_seconds()//3600)}h {int((datetime.now()-datetime.fromtimestamp(psutil.boot_time())).total_seconds()%3600//60)}m","processes":procs[:8],"time":datetime.now().strftime("%H:%M:%S"),"date":datetime.now().strftime("%d/%m/%Y"),"hostname":os.uname().nodename})
+        return jsonify({
+            "cpu":f"{cpu:.0f}%","ram":f"{mem.percent:.0f}%","disk":f"{disk.percent:.0f}%",
+            "temp":f"{cpu_temp:.0f}°C" if cpu_temp else "--",
+            "cpu_raw":cpu,"ram_used":mem.percent,"disk_used":disk.percent,"cpu_temp":cpu_temp,
+            "ram_total":f"{mem.total//(1024**3):.1f}GB","ram_free":f"{mem.available//(1024**3):.1f}GB",
+            "disk_total":f"{disk.total//(1024**3):.0f}GB",
+            "net_sent":f"{net.bytes_sent//(1024**2):.0f}MB","net_recv":f"{net.bytes_recv//(1024**2):.0f}MB",
+            "uptime":f"{int((datetime.now()-datetime.fromtimestamp(psutil.boot_time())).total_seconds()//3600)}h {int((datetime.now()-datetime.fromtimestamp(psutil.boot_time())).total_seconds()%3600//60)}m",
+            "processes":procs[:8],"time":datetime.now().strftime("%H:%M:%S"),"date":datetime.now().strftime("%d/%m/%Y"),
+            "hostname":os.uname().nodename
+        })
     except Exception as e: return jsonify({"error":str(e)})
+
+
+@app.route("/api/jimmy", methods=["POST"])
+def jimmy_task():
+    """Run a task via Jimmy agent"""
+    task = request.json.get("task", "")
+    if not task: return jsonify({"error": "No task"}), 400
+    try:
+        jimmy_dir = os.path.expanduser("~/jimmy")
+        if not os.path.exists(jimmy_dir):
+            return jsonify({"error": "Jimmy not installed"}), 500
+        # Run jimmy.py with the task
+        result = subprocess.run(
+            [sys.executable, os.path.join(jimmy_dir, "jimmy.py"), task],
+            capture_output=True, text=True, timeout=60,
+            cwd=jimmy_dir
+        )
+        output = result.stdout + result.stderr
+        # Clean output - remove ANSI codes and UI elements
+        output = re.sub(r'\x1b\[[0-9;]*m', '', output)
+        output = re.sub(r'╔.*?╗', '', output)
+        output = re.sub(r'╚.*?╝', '', output)
+        output = re.sub(r'║.*?║', '', output)
+        output = re.sub(r'\n\s*\n\s*\n', '\n', output).strip()
+        return jsonify({"result": output[-3000:]})
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Timeout (60s)"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/security")
+def security_info():
+    """Security monitoring endpoint"""
+    try:
+        # Active connections
+        connections = []
+        try:
+            for conn in psutil.net_connections(kind='inet'):
+                if conn.status == 'ESTABLISHED':
+                    proc_name = ""
+                    try:
+                        proc_name = psutil.Process(conn.pid).name() if conn.pid else "?"
+                    except:
+                        proc_name = "?"
+                    remote_ip = conn.raddr.ip if conn.raddr else "N/A"
+                    remote_port = conn.raddr.port if conn.raddr else "N/A"
+                    connections.append({
+                        "process": proc_name,
+                        "ip": remote_ip,
+                        "port": remote_port,
+                        "status": "ESTABLISHED"
+                    })
+        except Exception as e:
+            connections = [{"process": "error", "ip": str(e)[:50], "port": 0, "status": "ERROR"}]
+
+        # Listening ports
+        ports = []
+        try:
+            for conn in psutil.net_connections(kind='inet'):
+                if conn.status == 'LISTEN':
+                    proc_name = ""
+                    try:
+                        proc_name = psutil.Process(conn.pid).name() if conn.pid else "?"
+                    except:
+                        proc_name = "?"
+                    ports.append({
+                        "service": proc_name,
+                        "port": conn.laddr.port if conn.laddr else "?",
+                        "state": "LISTENING"
+                    })
+        except Exception as e:
+            ports = [{"service": "error", "port": 0, "state": str(e)[:50]}]
+
+        # Top processes
+        processes = []
+        try:
+            for p in psutil.process_iter(['pid', 'name', 'cpu_percent']):
+                try:
+                    i = p.info
+                    if i['cpu_percent'] and i['cpu_percent'] > 0.5:
+                        processes.append({
+                            "name": i['name'][:20],
+                            "pid": i['pid'],
+                            "cpu": f"{i['cpu_percent']:.1f}%"
+                        })
+                except:
+                    pass
+            processes.sort(key=lambda x: float(x['cpu'].replace('%', '')), reverse=True)
+        except:
+            processes = []
+
+        # Security log
+        log_entries = []
+        try:
+            with open('/var/log/auth.log', 'r') as f:
+                lines = f.readlines()[-20:]
+                for line in lines:
+                    if 'Failed' in line or 'Accepted' in line or 'sudo' in line:
+                        time_match = re.search(r'(\w+\s+\d+\s+[\d:]+)', line)
+                        log_time = time_match.group(1) if time_match else ""
+                        level = "log-ok" if "Accepted" in line else "log-warn" if "Failed" in line else "log-err"
+                        log_entries.append({
+                            "time": log_time[-8:],
+                            "message": line.strip()[-100:],
+                            "level": level
+                        })
+        except:
+            log_entries = [{"time": "--:--", "message": "No auth.log access", "level": "log-warn"}]
+
+        return jsonify({
+            "connections": connections[:15],
+            "ports": ports[:15],
+            "processes": processes[:10],
+            "log": log_entries[-10:]
+        })
+    except Exception as e:
+        return jsonify({"error": str(e), "connections": [], "ports": [], "processes": [], "log": []})
 
 @app.route("/api/tts", methods=["POST"])
 def text_to_speech():
@@ -400,4 +633,4 @@ def get_mood():
     else: return jsonify({"mood":"night","message":"Noche profunda. Te acompaño.","energy":35,"emotion":"serious"})
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=7861, debug=False, allow_unsafe_werkzeug=True)
+    socketio.run(app, host="127.0.0.1", port=7861, debug=False, allow_unsafe_werkzeug=True)
